@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--color-green: #02f1b5;
+	--color-darkblue: #131313;
+	--color-lightgrey: #dadada;
+	--color-black: #000000;
+	--color-darkgrey: #6a6a6a;
+
+	font-size: 0.8em;
+	font-family: 'roboto', sans-serif;
+}
+
+@font-face {
+	font-family: roboto;
+	src: url('./assets/fonts/Roboto/Roboto-Regular.ttf');
+}
+
+@font-face {
+	font-family: hacker;
+	src: url('./assets/fonts/Hacker-Technology-Font/Hacker.ttf');
+}
+
+@font-face {
+	font-family: arcade;
+	src: url('./assets/fonts/karmatic_arcade/ka1.ttf');
+}
+
+@layer utilities {
+	.ps-text-green {
+		color: var(--color-green);
+	}
+	.ps-text-lightgrey {
+		color: var(--color-lightgrey);
+	}
+	.ps-bg-darkblue {
+		background-color: var(--color-darkblue);
+	}
+}
