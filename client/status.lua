@@ -1,25 +1,24 @@
-local function StatusShow(title, values)
+local function StatusShow(title, description, values)
     SendNUIMessage({
-        action = "status",
-        show = true,
+        action = "ShowStatusBar",
         title = title,
-        values = values,
+        description = description,
+        values = values
     })
 end
 
 local function StatusHide()
     SendNUIMessage({
-        action = "status",
-        show = false,
+        action = "HideStatusBar"
     })
 end
 
-local function StatusUpdate(title, values)
+local function StatusUpdate(title, description, values)
     SendNUIMessage({
-        action = "status",
-        update = true,
+        action = "UpdateStatusBar",
         title = title,
-        values = values,
+        description = description,
+        values = values
     })
 end
 
