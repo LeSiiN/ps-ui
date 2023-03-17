@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { statusBarStore } from './../stores/stores';
+	import { statusBarStore } from '../stores/StatusBarStores';
 
 	import { EventHandler } from './../../utils/eventHandler';
 	EventHandler();

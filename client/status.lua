@@ -9,7 +9,7 @@ end
 
 local function StatusHide()
     SendNUIMessage({
-        action = "HideStatusBar"
+        action = "hideUi"
     })
 end
 

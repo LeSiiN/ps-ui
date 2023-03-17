@@ -32,6 +32,9 @@
 	.ps-text-green {
 		color: var(--color-green);
 	}
+	.ps-border-green {
+		border: 1px solid var(--color-green);
+	}
 	.ps-text-lightgrey {
 		color: var(--color-lightgrey);
 	}
