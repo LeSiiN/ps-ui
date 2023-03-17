@@ -1,6 +1,6 @@
-import { showComponent, showUi, statusBarStore } from './../src/stores/stores';
+import { setStatusBar } from '../src/stores/StatusBarStores';
+import { hideUi } from '../src/stores/GeneralStores';
 import { onMount, onDestroy } from 'svelte';
-import { UIComponentsEnum } from './../src/enums/UIComponentsEnum';
 
 interface nuiMessage {
 	data: {
@@ -14,18 +14,10 @@ export function EventHandler() {
 		switch (event.data.action) {
 			case 'ShowStatusBar':
 			case 'UpdateStatusBar': {
-				statusBarStore.set({
-					title: event.data.title,
-					description: event.data.description,
-					items: event.data.items,
-				});
-
-				showUi.set(true);
-				showComponent.set(UIComponentsEnum.StatusBar);
+				setStatusBar(event.data as any);
 			}
-			case 'HideStatusBar': {
-				showUi.set(false);
-				showComponent.set(undefined);
+			case 'hideUi': {
+				hideUi();
 			}
 		}
 	}
