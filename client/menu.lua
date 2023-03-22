@@ -1,7 +1,6 @@
-
 local function CreateMenu(MenuData)
     SendNUIMessage({
-        action = "menu-open",
+        action = "ShowMenu",
         data = MenuData
     })
     SetNuiFocus(true, true)
@@ -27,8 +26,8 @@ RegisterNUICallback('menuClose', function(data, cb)
 end)
 
 RegisterNUICallback('MenuSelect', function(data, cb)
-    if data.data.event then 
-        if data.data.server then 
+    if data.data.event then
+        if data.data.server then
             TriggerServerEvent(data.data.event, table.unpack(data.data.args))
         else
             TriggerEvent(data.data.event, table.unpack(data.data.args))
