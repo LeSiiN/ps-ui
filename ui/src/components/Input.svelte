@@ -13,6 +13,7 @@
 
 	onMount(() => {
 		inputs = document.querySelectorAll('input');
+		inputs[0].focus();
 	});
 
 	function submitInputs(): void {
