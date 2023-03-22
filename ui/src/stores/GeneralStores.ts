@@ -1,9 +1,13 @@
+import { UIComponentsEnum } from './../enums/UIComponentsEnum';
 import { writable, type Writable } from 'svelte/store';
-import { showComponent } from './StatusBarStores';
 
-export const showUiStore: Writable<boolean> = writable(true);
+export const showComponent: Writable<UIComponentsEnum> = writable(
+	UIComponentsEnum.Input
+);
+
+export const showUi: Writable<boolean> = writable(true);
 
 export function hideUi(): void {
-	showUiStore.set(false);
+	showUi.set(false);
 	showComponent.set(undefined);
 }

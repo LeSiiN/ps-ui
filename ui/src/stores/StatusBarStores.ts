@@ -1,11 +1,7 @@
 import { writable, type Writable } from 'svelte/store';
 import type { IStatusBar } from '../interfaces/IStatusBar';
 import { UIComponentsEnum } from '../enums/UIComponentsEnum';
-import { showUiStore } from './GeneralStores';
-
-export const showComponent: Writable<UIComponentsEnum> = writable(
-	UIComponentsEnum.Menu
-);
+import { hideUi, showUi } from './GeneralStores';
 
 export const statusBarStore: Writable<IStatusBar> = writable({
 	title: '',
@@ -13,13 +9,10 @@ export const statusBarStore: Writable<IStatusBar> = writable({
 	items: [],
 });
 
-export function setStatusBar(data: IStatusBar) {
+export function showStatusBar(data: IStatusBar) {
 	statusBarStore.set({
 		title: data.title,
 		description: data.description,
 		items: data.items,
 	});
-
-	showUiStore.set(true);
-	showComponent.set(UIComponentsEnum.StatusBar);
 }

@@ -32,13 +32,25 @@
 	.ps-text-green {
 		color: var(--color-green);
 	}
-	.ps-border-green {
-		border: 1px solid var(--color-green);
-	}
 	.ps-text-lightgrey {
 		color: var(--color-lightgrey);
 	}
+	.ps-text-darkblue {
+		color: var(--color-darkblue);
+	}
+	.ps-border-green {
+		border: 1px solid var(--color-green);
+	}
+	.ps-outline-green {
+		outline: 1px solid var(--color-green);
+	}
+	.ps-bg-lightgrey {
+		background-color: var(--color-lightgrey);
+	}
 	.ps-bg-darkblue {
 		background-color: var(--color-darkblue);
+	}
+	.ps-bg-green {
+		background-color: var(--color-green);
 	}
 }
