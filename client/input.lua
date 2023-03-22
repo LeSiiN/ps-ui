@@ -3,11 +3,13 @@ local Active = false
 
 local function Input(InputData)
     p = promise.new()
-    while Active do Wait(0) end
+    while Active do
+        Wait(0)
+    end
     Active = true
 
     SendNUIMessage({
-        action = "input",
+        action = "ShowInput",
         data = InputData
     })
     SetNuiFocus(true, true)
@@ -18,7 +20,7 @@ end
 exports("Input", Input)
 
 RegisterNUICallback('input-callback', function(data, cb)
-	SetNuiFocus(false, false)
+    SetNuiFocus(false, false)
     p:resolve(data.input)
     p = nil
     Active = false
