@@ -14,7 +14,8 @@
 	import StatusBar from './components/StatusBar.svelte';
 	import Menu from './components/Menu.svelte';
 	import Input from './components/Input.svelte';
-	import ConnectingGame from './components/ConnectingGame.svelte';
+	import GameLauncher from './games/GameLauncher.svelte';
+	import MemoryGame from './games/MemoryGame.svelte';
 </script>
 
 {#if $showUi === true}
@@ -32,7 +33,11 @@
 		{/if}
 
 		{#if $showComponent === UIComponentsEnum.Connecting}
-			<ConnectingGame game={GamesEnum.NumberMaze} />
+			<GameLauncher game={GamesEnum.NumberMaze} />
+		{/if}
+
+		{#if $showComponent === UIComponentsEnum.MemoryGame}
+			<MemoryGame />
 		{/if}
 	</main>
 {/if}

@@ -29,6 +29,16 @@
 }
 
 @layer utilities {
+	.ps-text-roboto {
+		font-family: 'roboto';
+	}
+	.ps-font-arcade {
+		font-family: 'arcade';
+	}
+	.ps-font-hacker {
+		font-family: 'hacker';
+	}
+
 	.ps-text-green {
 		color: var(--color-green);
 	}
@@ -38,12 +48,14 @@
 	.ps-text-darkblue {
 		color: var(--color-darkblue);
 	}
+
 	.ps-border-green {
 		border: 1px solid var(--color-green);
 	}
 	.ps-outline-green {
 		outline: 1px solid var(--color-green);
 	}
+
 	.ps-bg-lightgrey {
 		background-color: var(--color-lightgrey);
 	}
@@ -52,5 +64,9 @@
 	}
 	.ps-bg-green {
 		background-color: var(--color-green);
+	}
+
+	.ps-bg-green-w-opacity {
+		background-color: rgba(2, 241, 181, 0.2);
 	}
 }

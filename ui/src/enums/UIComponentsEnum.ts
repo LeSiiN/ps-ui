@@ -3,4 +3,5 @@ export enum UIComponentsEnum {
 	Menu = 'Menu',
 	Input = 'Input',
 	Connecting = 'Connecting',
+	MemoryGame = 'MemoryGame',
 }
