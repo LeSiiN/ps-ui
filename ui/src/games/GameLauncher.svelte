@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { GamesEnum } from './../enums/GamesEnum';
-	import { ConnectingGameMessageEnum } from './../enums/GameConnectionMessages';
+	import type { GamesEnum } from '../enums/GamesEnum';
+	import { ConnectingGameMessageEnum } from '../enums/GameConnectionMessages';
 	import { onMount } from 'svelte';
-	import Skull from './../assets/svgs/Skull.svelte';
+	import Skull from '../assets/svgs/Skull.svelte';
 
 	export let game: GamesEnum;
 
@@ -14,36 +14,48 @@
 	let connectionText: ConnectingGameMessageEnum =
 		ConnectingGameMessageEnum.Connecting;
 
-	const connect = new Promise((resolve) => {
-		let width = 0;
+	export const connectToGame: Promise<boolean> = new Promise(
+		(resolve, reject) => {
+			let width = 0;
 
+			setTimeout(() => {
+				let interval = setInterval(() => {
+					width++;
+
+					loadingBar.style.width = `${width}%`;
+
+					if (width === 100) {
+						clearInterval(interval);
+						resolve(true);
+					}
+				}, 30);
+			}, 2000);
+		}
+	);
+
+	async function init(): Promise<void> {
+		await openGame(game);
+
+		console.log('works');
+	}
+
+	async function openGame(game: GamesEnum): Promise<void> {
 		setTimeout(() => {
-			let interval = setInterval(() => {
-				width++;
-
-				loadingBar.style.width = `${width}%`;
-
-				if (width === 100) {
-					clearInterval(interval);
-					resolve(true);
-				}
-			}, 30);
+			Promise.resolve();
 		}, 2000);
-	});
-
-	function openGame(game: GamesEnum): void {
-		setTimeout(() => {}, 2000);
 	}
 
 	onMount(() => {
-		connect
-			.then(() => {
-				loaded = true;
-				connectionText = ConnectingGameMessageEnum.Connected;
-			})
-			.then(() => {
-				openGame(game);
-			});
+		init();
+
+		// await connectToGame
+		// 	.then(() => {
+		// 		loaded = true;
+		// 		connectionText = ConnectingGameMessageEnum.Connected;
+		// 	})
+		// 	.then(() => {
+		// 		openGame(game);
+		// 	});
 	});
 </script>
 
