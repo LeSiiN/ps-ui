@@ -8,6 +8,16 @@
 	let inputs: NodeListOf<HTMLDivElement>;
 	let correctInputs: Array<HTMLDivElement> = [];
 	let answer: Array<string> = [];
+	let answersCorrect: number = 0;
+	let answersIncorrect: number = 0;
+	let maxAnswersIncorrect: number = 1;
+
+	function resetGame(): void {
+		answer = [];
+		answersCorrect = 0;
+		answersIncorrect = 0;
+		correctInputs = [];
+	}
 
 	onMount(() => {
 		setupGame();
@@ -17,7 +27,7 @@
 		try {
 			await addSquares();
 			await generateAnswer();
-			await appendCorrectInputs();
+			await setCorrectAnswers();
 			await showAnswer();
 		} catch {
 			console.trace("Couldn't setup game");
@@ -54,7 +64,9 @@
 					'cursor-pointer',
 					'input'
 				);
-				element.addEventListener('click', guessAnswer);
+				element.addEventListener('click', (event: PointerEvent) =>
+					guessAnswer(event)
+				);
 				element.setAttribute('data-answer', `${index}`);
 				gameContainer.append(element);
 			}
@@ -84,7 +96,51 @@
 		});
 	}
 
-	function guessAnswer(): void {}
+	/**
+	 * Handles a user's guess when they click on a square.
+	 * If the guess is correct, increments the `answersCorrect` counter and checks if the game has ended.
+	 * If the guess is incorrect, increments the `answersIncorrect` counter and checks if the maximum number of incorrect answers has been reached.
+	 * Adds the `correctAnswers` or `incorrectAnswers` class to the clicked square depending on the guess.
+	 *
+	 * @param event - The click event object.
+	 */
+	function guessAnswer(event: any): void {
+		const correctAnswer: string =
+			event.target.attributes.getNamedItem('data-correct').value;
+
+		if (correctAnswer === 'true') {
+			answersCorrect++;
+
+			if (answersCorrect === answer.length) {
+				endGame(true);
+			}
+			event.target.classList.add('correctAnswers');
+		}
+
+		if (correctAnswer === 'false') {
+			answersIncorrect++;
+
+			if (answersIncorrect == maxAnswersIncorrect) {
+				endGame(false);
+			}
+
+			event.target.classList.add('incorrectAnswers');
+		}
+	}
+
+	function endGame(success: boolean): void {
+		if (success) {
+			console.log('winner');
+
+			return;
+		}
+
+		if (!success) {
+			resetGame();
+
+			return;
+		}
+	}
 
 	/**
 	 * Finds all HTML elements with the class 'input' and adds a 'data-correct' attribute
@@ -93,7 +149,7 @@
 	 *
 	 * @returns A Promise that resolves when the correct answers have been marked.
 	 */
-	async function appendCorrectInputs(): Promise<void> {
+	async function setCorrectAnswers(): Promise<void> {
 		return new Promise((resolve) => {
 			inputs = document.querySelectorAll('.input');
 
@@ -101,6 +157,8 @@
 				if (answer.includes(input.getAttribute('data-answer'))) {
 					input.setAttribute('data-correct', 'true');
 					correctInputs.push(input);
+				} else {
+					input.setAttribute('data-correct', 'false');
 				}
 			});
 
@@ -159,5 +217,11 @@
 <style>
 	:global(.correctAnswers) {
 		background-color: var(--color-green) !important;
+		pointer-events: none;
+	}
+
+	:global(.incorrectAnswers) {
+		background-color: red;
+		pointer-events: none;
 	}
 </style>
