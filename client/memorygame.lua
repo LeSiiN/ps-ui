@@ -16,10 +16,11 @@ local function MemoryGame(callback, gameTime, amountOfAnswers, maxAnswersIncorre
         open = true
         SendNUIMessage({
             action = "newMemoryGame",
+            game = "MemoryGame",
             gameTime = gameTime,
             amountOfAnswers = amountOfAnswers,
             maxAnswersIncorrect = maxAnswersIncorrect,
-            triggerEvent = triggerEvent
+            triggerEvent = triggerEvent or 'memorygame-callback'
         })
         SetNuiFocus(true, true)
     end
