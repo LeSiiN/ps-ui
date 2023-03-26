@@ -1,6 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { UIComponentsEnum } from './../enums/UIComponentsEnum';
+	import { showComponent } from './../stores/GeneralStores';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+	import fetchNui from './../../utils/fetch';
 	import Skull from './../assets/svgs/Skull.svelte';
+	import GameLauncher from './GameLauncher.svelte';
+	import { GamesEnum } from './../enums/GamesEnum';
+
+	const startMemoryGame = createEventDispatcher();
 
 	const skullColor: string = '#02f1b5';
 
@@ -11,38 +18,60 @@
 	let answersCorrect: number = 0;
 	let answersIncorrect: number = 0;
 	let maxAnswersIncorrect: number = 1;
+	let amountOfAnswers: number = 1;
+	let gameActive: boolean = true;
+	let hackSuccess: boolean;
 
 	function resetGame(): void {
 		answer = [];
 		answersCorrect = 0;
 		answersIncorrect = 0;
 		correctInputs = [];
+		hackSuccess = false;
+		gameActive = false;
+	}
+
+	function startGameTrigger(event): void {
+		console.log(event);
 	}
 
 	onMount(() => {
 		setupGame();
+		window.addEventListener('startGame', startGameTrigger);
 	});
 
 	async function setupGame(): Promise<void> {
-		try {
-			await addSquares();
-			await generateAnswer();
-			await setCorrectAnswers();
-			await showAnswer();
-		} catch {
-			console.trace("Couldn't setup game");
-		}
+		gameActive = true;
+
+		await addSquares();
+		await generateAnswer();
+		await setCorrectAnswers();
+		await startGame();
+	}
+
+	async function startGame(): Promise<void> {
+		return new Promise((resolve) => {
+			showAnswer();
+		});
 	}
 
 	/**
-	 * Generates a random integer between 'min' (inclusive) and 'max' (exclusive) using Math.floor.
+	 * Returns a random integer between the `min` and `max` parameters (inclusive), as a string.
+	 * If the generated number already exists in the `answer` array, generate a new random number
+	 * until a unique number is found.
 	 *
-	 * @param min - The minimum value for the random number (inclusive).
-	 * @param max - The maximum value for the random number (exclusive).
-	 * @returns A random integer between 'min' and 'max'.
+	 * @param min - The minimum number that can be generated (inclusive).
+	 * @param max - The maximum number that can be generated (inclusive).
+	 * @returns A string representation of a random number between `min` and `max` (inclusive).
 	 */
 	function randomNumber(min: number, max: number): string {
-		return `${Math.floor(Math.random() * (max - min) + min)}`;
+		let number = `${Math.floor(Math.random() * (max - min) + min)}`;
+
+		while (answer.includes(number)) {
+			number = `${Math.floor(Math.random() * (max - min) + min)}`;
+		}
+
+		return number;
 	}
 
 	/**
@@ -54,21 +83,21 @@
 	async function addSquares(): Promise<void> {
 		return new Promise((resolve) => {
 			for (let index = 0; index < 25; index++) {
-				let element = document.createElement('div', {
+				let input = document.createElement('div', {
 					is: 'kekw',
 				});
 
-				element.classList.add(
+				input.classList.add(
 					'ps-border-green',
 					'ps-bg-green-w-opacity',
 					'cursor-pointer',
 					'input'
 				);
-				element.addEventListener('click', (event: PointerEvent) =>
+				input.addEventListener('click', (event: PointerEvent) =>
 					guessAnswer(event)
 				);
-				element.setAttribute('data-answer', `${index}`);
-				gameContainer.append(element);
+				input.setAttribute('data-answer', `${index}`);
+				gameContainer.append(input);
 			}
 
 			resolve();
@@ -83,14 +112,11 @@
 	 */
 	async function generateAnswer(): Promise<void> {
 		return new Promise((resolve) => {
-			// Generate 7 random numbers between 0 and 25 and add them to the `answer` array
-			answer.push(randomNumber(0, 2));
-			answer.push(randomNumber(3, 6));
-			answer.push(randomNumber(7, 10));
-			answer.push(randomNumber(11, 14));
-			answer.push(randomNumber(15, 18));
-			answer.push(randomNumber(19, 22));
-			answer.push(randomNumber(23, 25));
+			for (let answers = 0; answers < amountOfAnswers; answers++) {
+				const number = randomNumber(0, 25);
+
+				answer.push(number);
+			}
 
 			resolve();
 		});
@@ -125,20 +151,6 @@
 			}
 
 			event.target.classList.add('incorrectAnswers');
-		}
-	}
-
-	function endGame(success: boolean): void {
-		if (success) {
-			console.log('winner');
-
-			return;
-		}
-
-		if (!success) {
-			resetGame();
-
-			return;
 		}
 	}
 
@@ -177,7 +189,6 @@
 	async function showAnswer(): Promise<void> {
 		return new Promise((resolve) => {
 			correctInputs.forEach((input: HTMLDivElement) => {
-				console.trace();
 				input.classList.add('correctAnswers');
 			});
 
@@ -191,12 +202,33 @@
 		});
 	}
 
-	function startGame(): void {}
+	function endGame(success: boolean): void {
+		hackSuccess = success;
+		gameActive = false;
+
+		console.log(hackSuccess);
+
+		setTimeout(() => {
+			showComponent.set(undefined);
+			fetchNui('memorygame-callback', { success: success });
+		}, 4000);
+
+		resetGame();
+	}
+
+	// Remove all event listeners attached to the input elements to prevent memory leaks
+	onDestroy(() => {
+		inputs.forEach((input: HTMLDivElement) => {
+			input.removeEventListener(null, null);
+		});
+	});
 </script>
 
-<div class="flex items-center justify-center min-h-screen">
-	<div class="flex items-center flex-col w-[500px] ps-bg-darkblue p-10">
-		<div class="w-[20%] border">
+<div class="flex items-center justify-center min-h-screen ">
+	<div
+		class="flex items-center flex-col w-[500px]  ps-bg-darkblue p-10 shadow-lg shadow-black"
+	>
+		<div class="w-[20%]">
 			<Skull color={skullColor} />
 		</div>
 		<h1 class="ps-font-arcade text-white text-xl mt-5">Memory Minigame</h1>
@@ -207,10 +239,25 @@
 			quibusdam quidem minus libero?
 		</p>
 		<p class="ps-text-lightgrey mt-5">Some description</p>
-		<div
-			class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
-			bind:this={gameContainer}
-		/>
+		{#if gameActive}
+			<div
+				class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
+				bind:this={gameContainer}
+			/>
+		{/if}
+		{#if !gameActive}
+			<div class="flex flex-1 items-center justify-center self-stretch">
+				{#if hackSuccess === true}
+					<h1 class="ps-font-arcade text-white text-xl mt-5">
+						System successfully hacked
+					</h1>
+				{:else}
+					<h1 class="ps-font-arcade text-white text-3xl mt-5">
+						Firewall won
+					</h1>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -221,7 +268,7 @@
 	}
 
 	:global(.incorrectAnswers) {
-		background-color: red;
+		background-color: red !important;
 		pointer-events: none;
 	}
 </style>
