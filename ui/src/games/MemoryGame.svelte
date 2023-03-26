@@ -7,8 +7,6 @@
 	import GameLauncher from './GameLauncher.svelte';
 	import { GamesEnum } from './../enums/GamesEnum';
 
-	const startMemoryGame = createEventDispatcher();
-
 	const skullColor: string = '#02f1b5';
 
 	let gameContainer: HTMLDivElement;
@@ -31,13 +29,9 @@
 		gameActive = false;
 	}
 
-	function startGameTrigger(event): void {
-		console.log(event);
-	}
-
 	onMount(() => {
 		setupGame();
-		window.addEventListener('startGame', startGameTrigger);
+		window.addEventListener('setupGame', setupGame);
 	});
 
 	async function setupGame(): Promise<void> {

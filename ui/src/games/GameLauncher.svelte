@@ -35,17 +35,16 @@
 
 	// Declare an async function to initialize the game
 	async function init(): Promise<void> {
-		// Call a function to open the game
 		await connectToGame();
-
-		// We will get game from
-		await openGame(game);
+		await setupGame(game);
 	}
 
 	// Declare an async function to open the game
-	async function openGame(game: GamesEnum): Promise<void> {
+	async function setupGame(game: GamesEnum): Promise<void> {
 		return new Promise((resolve) => {
-			dispatch('startGame', { game: game });
+			dispatch('setupGame', { game: game });
+
+			showLoading = false;
 
 			resolve();
 		});
