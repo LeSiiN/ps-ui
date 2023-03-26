@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { UIComponentsEnum } from './../enums/UIComponentsEnum';
 	import { showComponent } from './../stores/GeneralStores';
-	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import fetchNui from './../../utils/fetch';
 	import Skull from './../assets/svgs/Skull.svelte';
-	import GameLauncher from './GameLauncher.svelte';
-	import { GamesEnum } from './../enums/GamesEnum';
+	import { memoryGameSettingsStore } from './../stores/GameSettingsStore';
+	import type { IGameSettings } from './../interfaces/IGameSettings';
 
 	const skullColor: string = '#02f1b5';
 
@@ -13,11 +12,12 @@
 	let inputs: NodeListOf<HTMLDivElement>;
 	let correctInputs: Array<HTMLDivElement> = [];
 	let answer: Array<string> = [];
+	let gameTime: number = 0;
 	let answersCorrect: number = 0;
 	let answersIncorrect: number = 0;
-	let maxAnswersIncorrect: number = 1;
-	let amountOfAnswers: number = 1;
-	let gameActive: boolean = true;
+	let maxAnswersIncorrect: number;
+	let amountOfAnswers: number;
+	let gameActive: boolean;
 	let hackSuccess: boolean;
 
 	function resetGame(): void {
@@ -27,25 +27,33 @@
 		correctInputs = [];
 		hackSuccess = false;
 		gameActive = false;
+		gameContainer.innerHTML = '';
 	}
 
 	onMount(() => {
 		setupGame();
-		window.addEventListener('setupGame', setupGame);
 	});
 
 	async function setupGame(): Promise<void> {
 		gameActive = true;
 
+		await setupGameSettings();
 		await addSquares();
 		await generateAnswer();
 		await setCorrectAnswers();
-		await startGame();
+		await showAnswer();
 	}
 
-	async function startGame(): Promise<void> {
+	async function setupGameSettings(): Promise<void> {
 		return new Promise((resolve) => {
-			showAnswer();
+			memoryGameSettingsStore.subscribe((setting: IGameSettings) => {
+				maxAnswersIncorrect = setting.maxAnswersIncorrect || 2;
+				gameTime = setting.gameTime || 10;
+				setting.triggerEvent || '';
+				amountOfAnswers = setting.amountOfAnswers || 15;
+			});
+
+			resolve();
 		});
 	}
 
@@ -77,9 +85,7 @@
 	async function addSquares(): Promise<void> {
 		return new Promise((resolve) => {
 			for (let index = 0; index < 25; index++) {
-				let input = document.createElement('div', {
-					is: 'kekw',
-				});
+				let input = document.createElement('div');
 
 				input.classList.add(
 					'ps-border-green',
@@ -91,7 +97,8 @@
 					guessAnswer(event)
 				);
 				input.setAttribute('data-answer', `${index}`);
-				gameContainer.append(input);
+
+				gameContainer?.append(input);
 			}
 
 			resolve();
@@ -182,17 +189,19 @@
 	 */
 	async function showAnswer(): Promise<void> {
 		return new Promise((resolve) => {
-			correctInputs.forEach((input: HTMLDivElement) => {
-				input.classList.add('correctAnswers');
-			});
-
 			setTimeout(() => {
 				correctInputs.forEach((input: HTMLDivElement) => {
-					input.classList.remove('correctAnswers');
+					input.classList.add('correctAnswers');
 				});
 
-				resolve();
-			}, 2000);
+				setTimeout(() => {
+					correctInputs.forEach((input: HTMLDivElement) => {
+						input.classList.remove('correctAnswers');
+					});
+
+					resolve();
+				}, 1000);
+			}, 200);
 		});
 	}
 
@@ -200,20 +209,20 @@
 		hackSuccess = success;
 		gameActive = false;
 
-		console.log(hackSuccess);
-
 		setTimeout(() => {
 			showComponent.set(undefined);
 			fetchNui('memorygame-callback', { success: success });
-		}, 4000);
+		}, 2000);
 
 		resetGame();
 	}
 
 	// Remove all event listeners attached to the input elements to prevent memory leaks
 	onDestroy(() => {
-		inputs.forEach((input: HTMLDivElement) => {
-			input.removeEventListener(null, null);
+		requestAnimationFrame(() => {
+			inputs.forEach((input: HTMLDivElement) => {
+				input.removeEventListener(null, null);
+			});
 		});
 	});
 </script>

@@ -1,12 +1,12 @@
 <script lang="ts">
-	// Import necessary modules and types
-	import type { GamesEnum } from '../enums/GamesEnum';
+	import { UIComponentsEnum } from './../enums/UIComponentsEnum';
+	import { GamesEnum } from '../enums/GamesEnum';
 	import { ConnectingGameMessageEnum } from '../enums/GameConnectionMessages';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import Skull from '../assets/svgs/Skull.svelte';
 	import MemoryGame from './MemoryGame.svelte';
+	import { showComponent } from './../stores/GeneralStores';
 
-	const dispatch = createEventDispatcher();
 	const skullColor: string = '#02f1b5';
 
 	let game: GamesEnum;
@@ -29,22 +29,24 @@
 						resolve();
 					}
 				}, 30);
-			}, 2000);
+			}, 1000);
 		});
 	}
 
 	// Declare an async function to initialize the game
 	async function init(): Promise<void> {
 		await connectToGame();
-		await setupGame(game);
+
+		showLoading = false;
+		await setupGame(GamesEnum.MemoryGame);
 	}
 
 	// Declare an async function to open the game
 	async function setupGame(game: GamesEnum): Promise<void> {
 		return new Promise((resolve) => {
-			dispatch('setupGame', { game: game });
-
 			showLoading = false;
+
+			showComponent.set(UIComponentsEnum.MemoryGame);
 
 			resolve();
 		});
@@ -80,6 +82,6 @@
 	</div>
 {/if}
 
-{#if !showLoading}
+{#if !showLoading && $showComponent === UIComponentsEnum.MemoryGame}
 	<MemoryGame />
 {/if}

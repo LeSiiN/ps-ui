@@ -1,5 +1,10 @@
 import { showStatusBar } from '../src/stores/StatusBarStores';
-import { hideUi, showComponent, showUi } from '../src/stores/GeneralStores';
+import {
+	hideUi,
+	setupGame as setupMemoryGame,
+	showComponent,
+	showUi,
+} from '../src/stores/GeneralStores';
 import { showInput } from './../src/stores/InputStores';
 
 import { onMount, onDestroy } from 'svelte';
@@ -29,6 +34,9 @@ export function EventHandler() {
 			}
 			case 'hideUi': {
 				hideUi();
+			}
+			case 'newMemoryGame': {
+				setupMemoryGame(event.data as any);
 			}
 		}
 	}
