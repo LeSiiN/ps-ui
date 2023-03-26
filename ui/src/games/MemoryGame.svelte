@@ -1,25 +1,49 @@
 <script lang="ts">
+	import type { IGameSettings } from './../interfaces/IGameSettings';
 	import { showComponent } from './../stores/GeneralStores';
 	import { onDestroy, onMount } from 'svelte';
 	import fetchNui from './../../utils/fetch';
 	import Skull from './../assets/svgs/Skull.svelte';
-	import { memoryGameSettingsStore } from './../stores/GameSettingsStore';
-	import type { IGameSettings } from './../interfaces/IGameSettings';
+	import { gameSettings } from './../stores/GameSettingsStore';
 
 	const skullColor: string = '#02f1b5';
 
+	/** The HTML element that contains the game.  */
 	let gameContainer: HTMLDivElement;
+	/** A list of HTML div elements that represent the answer inputs. */
 	let inputs: NodeListOf<HTMLDivElement>;
+	/** An array of HTML div elements that represent the correct answer inputs. */
 	let correctInputs: Array<HTMLDivElement> = [];
+	/** An array that stores the current answer sequence. */
 	let answer: Array<string> = [];
-	let gameTime: number = 0;
+	/** The duration of the game in seconds. */
+	let gameTime: number;
+	/** The number of correct answers submitted by the user. */
 	let answersCorrect: number = 0;
+	/** The number of incorrect answers submitted by the user. */
 	let answersIncorrect: number = 0;
+	/** The maximum number of incorrect answers allowed before the game ends. */
 	let maxAnswersIncorrect: number;
+	/** The number of answers to display during the game. */
 	let amountOfAnswers: number;
+	/** A boolean indicating whether the game is currently active. */
 	let gameActive: boolean;
+	/** A boolean indicating whether the user successfully completed the game. */
 	let hackSuccess: boolean;
+	/** NUI event that should be called when the game has been completed */
+	let triggerEvent: string;
 
+	gameSettings.subscribe((setting: IGameSettings) => {
+		maxAnswersIncorrect = setting.maxAnswersIncorrect || 2;
+		gameTime = setting.gameTime || 10;
+		triggerEvent = setting.triggerEvent || '';
+		amountOfAnswers = setting.amountOfAnswers || 15;
+	});
+
+	/**
+	 * Resets the game state by resetting all necessary variables and clearing the game container's HTML.
+	 * @return {void}
+	 */
 	function resetGame(): void {
 		answer = [];
 		answersCorrect = 0;
@@ -30,31 +54,34 @@
 		gameContainer.innerHTML = '';
 	}
 
+	/**
+	 * Sets up the game on mount by calling the `setupGame` function.
+	 * @returns {void}
+	 */
 	onMount(() => {
 		setupGame();
 	});
 
+	/**
+	 * Sets up the game by initializing game variables and generating the initial game board.
+	 *
+	 * @returns {Promise<void>} A Promise that resolves once the game has been set up.
+	 */
 	async function setupGame(): Promise<void> {
+		// Set the game as active
 		gameActive = true;
 
-		await setupGameSettings();
+		// Add game squares to the board
 		await addSquares();
+
+		// Generate the answer for the game
 		await generateAnswer();
+
+		// Set the correct answers for the game
 		await setCorrectAnswers();
+
+		// Show the answer for a brief moment to the player
 		await showAnswer();
-	}
-
-	async function setupGameSettings(): Promise<void> {
-		return new Promise((resolve) => {
-			memoryGameSettingsStore.subscribe((setting: IGameSettings) => {
-				maxAnswersIncorrect = setting.maxAnswersIncorrect || 2;
-				gameTime = setting.gameTime || 10;
-				setting.triggerEvent || '';
-				amountOfAnswers = setting.amountOfAnswers || 15;
-			});
-
-			resolve();
-		});
 	}
 
 	/**
@@ -180,21 +207,20 @@
 	}
 
 	/**
-	 * Adds a CSS class to the HTML elements in the `correctInputs` array, causing them to be
-	 * styled as correct answers for a short time. Then removes the CSS class after a delay
-	 * of 2 seconds and resolves a Promise. Used to show the correct answers to the user.
-	 *
-	 * @returns A Promise that resolves after the correct answers have been shown and the
-	 * CSS class has been removed.
+	 * Shows the correct answers on the game board by adding and removing the 'correctAnswers' class to the correct inputs.
+	 * After a delay of 1000ms, removes the 'correctAnswers' class from all inputs.
+	 * @returns Promise that resolves after the 'correctAnswers' class has been removed from all inputs.
 	 */
 	async function showAnswer(): Promise<void> {
-		return new Promise((resolve) => {
+		await new Promise<void>((resolve) => {
 			setTimeout(() => {
+				// Add 'correctAnswers' class to the correct inputs
 				correctInputs.forEach((input: HTMLDivElement) => {
 					input.classList.add('correctAnswers');
 				});
 
 				setTimeout(() => {
+					// Remove 'correctAnswers' class from all inputs
 					correctInputs.forEach((input: HTMLDivElement) => {
 						input.classList.remove('correctAnswers');
 					});
@@ -205,19 +231,28 @@
 		});
 	}
 
+	/**
+	 * Ends the game and triggers the callback to the parent component.
+	 * @param success - Whether the game was completed successfully or not.
+	 */
 	function endGame(success: boolean): void {
+		// Update game state
 		hackSuccess = success;
 		gameActive = false;
 
+		// Show the "end game" message and trigger the callback to the parent component
 		setTimeout(() => {
+			gameSettings.subscribe((setting: IGameSettings) => {
+				fetchNui(setting.triggerEvent, { success: success });
+			});
 			showComponent.set(undefined);
-			fetchNui('memorygame-callback', { success: success });
 		}, 2000);
 
+		// Reset game settings and data
 		resetGame();
 	}
 
-	// Remove all event listeners attached to the input elements to prevent memory leaks
+	/** Remove all event listeners attached to the input elements to prevent memory leaks */
 	onDestroy(() => {
 		requestAnimationFrame(() => {
 			inputs.forEach((input: HTMLDivElement) => {
@@ -242,15 +277,13 @@
 			quibusdam quidem minus libero?
 		</p>
 		<p class="ps-text-lightgrey mt-5">Some description</p>
-		{#if gameActive}
-			<div
-				class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
-				bind:this={gameContainer}
-			/>
-		{/if}
+		<div
+			class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
+			bind:this={gameContainer}
+		/>
 		{#if !gameActive}
 			<div class="flex flex-1 items-center justify-center self-stretch">
-				{#if hackSuccess === true}
+				{#if hackSuccess == true}
 					<h1 class="ps-font-arcade text-white text-xl mt-5">
 						System successfully hacked
 					</h1>
