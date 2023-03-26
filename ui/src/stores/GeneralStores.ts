@@ -1,9 +1,9 @@
 import { UIComponentsEnum } from './../enums/UIComponentsEnum';
 import { writable, type Writable } from 'svelte/store';
 import { GamesEnum } from './../enums/GamesEnum';
-import { memoryGameSettingsStore } from './GameSettingsStore';
+import { gameSettings } from './GameSettingsStore';
 
-export const showComponent: Writable<UIComponentsEnum> = writable(
+export const showComponent: Writable<UIComponentsEnum | string> = writable(
 	UIComponentsEnum.Connecting
 );
 
@@ -15,14 +15,17 @@ export function hideUi(): void {
 }
 
 export function setupGame(data): void {
-	switch (data.game) {
-		case GamesEnum.MemoryGame:
-			showComponent.set(UIComponentsEnum.MemoryGame);
-			memoryGameSettingsStore.set({
-				gameTime: data.game.gameTime,
-				amountOfAnswers: data.game.amountOfAnswers,
-				maxAnswersIncorrect: data.game.maxAnswersIncorrect,
-				triggerEvent: data.game.maxAnswersIncorrect,
+	const game = data.data;
+	console.log(game);
+	switch (data.data.game) {
+		case GamesEnum.MemoryGame: {
+			gameSettings.set({
+				game: 'MemoryGame',
+				gameTime: game.gameTime || 10,
+				amountOfAnswers: game.amountOfAnswers || 15,
+				maxAnswersIncorrect: game.maxAnswersIncorrect || 2,
+				triggerEvent: game.triggerEvent || 'memorygame-callback',
 			});
+		}
 	}
 }
