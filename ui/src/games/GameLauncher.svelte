@@ -1,61 +1,59 @@
 <script lang="ts">
+	// Import necessary modules and types
 	import type { GamesEnum } from '../enums/GamesEnum';
 	import { ConnectingGameMessageEnum } from '../enums/GameConnectionMessages';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Skull from '../assets/svgs/Skull.svelte';
+	import MemoryGame from './MemoryGame.svelte';
 
-	export let game: GamesEnum;
-
+	const dispatch = createEventDispatcher();
 	const skullColor: string = '#02f1b5';
 
+	let game: GamesEnum;
 	let showLoading: boolean = true;
 	let loadingBar: HTMLDivElement;
 	let loaded: boolean = false;
 	let connectionText: ConnectingGameMessageEnum =
 		ConnectingGameMessageEnum.Connecting;
 
-	export const connectToGame: Promise<boolean> = new Promise(
-		(resolve, reject) => {
+	// Declare a promise to connect to the game
+	async function connectToGame(): Promise<void> {
+		return new Promise((resolve) => {
 			let width = 0;
-
 			setTimeout(() => {
 				let interval = setInterval(() => {
 					width++;
-
 					loadingBar.style.width = `${width}%`;
-
 					if (width === 100) {
 						clearInterval(interval);
-						resolve(true);
+						resolve();
 					}
 				}, 30);
 			}, 2000);
-		}
-	);
+		});
+	}
 
+	// Declare an async function to initialize the game
 	async function init(): Promise<void> {
+		// Call a function to open the game
+		await connectToGame();
+
+		// We will get game from
 		await openGame(game);
-
-		console.log('works');
 	}
 
+	// Declare an async function to open the game
 	async function openGame(game: GamesEnum): Promise<void> {
-		setTimeout(() => {
-			Promise.resolve();
-		}, 2000);
+		return new Promise((resolve) => {
+			dispatch('startGame', { game: game });
+
+			resolve();
+		});
 	}
 
+	// Call init() on mount
 	onMount(() => {
 		init();
-
-		// await connectToGame
-		// 	.then(() => {
-		// 		loaded = true;
-		// 		connectionText = ConnectingGameMessageEnum.Connected;
-		// 	})
-		// 	.then(() => {
-		// 		openGame(game);
-		// 	});
 	});
 </script>
 
@@ -81,4 +79,8 @@
 			{/if}
 		</div>
 	</div>
+{/if}
+
+{#if !showLoading}
+	<MemoryGame />
 {/if}
