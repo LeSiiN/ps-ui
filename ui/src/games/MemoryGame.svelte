@@ -33,11 +33,16 @@
 	/** NUI event that should be called when the game has been completed */
 	let triggerEvent: string;
 
+	/**
+	 * Subscribes to the `gameSettings` observable and updates the relevant variables.
+	 * @param {IGameSettings} setting - An object containing game settings.
+	 * @returns {void}
+	 */
 	gameSettings.subscribe((setting: IGameSettings) => {
-		maxAnswersIncorrect = setting.maxAnswersIncorrect || 2;
-		gameTime = setting.gameTime || 10;
-		triggerEvent = setting.triggerEvent || '';
-		amountOfAnswers = setting.amountOfAnswers || 15;
+		maxAnswersIncorrect = setting.maxAnswersIncorrect ?? 2;
+		gameTime = setting.gameTime ?? 10;
+		triggerEvent = setting.triggerEvent ?? '';
+		amountOfAnswers = setting.amountOfAnswers ?? 15;
 	});
 
 	/**
@@ -208,7 +213,6 @@
 
 	/**
 	 * Shows the correct answers on the game board by adding and removing the 'correctAnswers' class to the correct inputs.
-	 * After a delay of 1000ms, removes the 'correctAnswers' class from all inputs.
 	 * @returns Promise that resolves after the 'correctAnswers' class has been removed from all inputs.
 	 */
 	async function showAnswer(): Promise<void> {
@@ -262,35 +266,37 @@
 	});
 </script>
 
+<!-- The main container for the game UI. -->
 <div class="flex items-center justify-center min-h-screen ">
-	<div
-		class="flex items-center flex-col w-[500px]  ps-bg-darkblue p-10 shadow-lg shadow-black"
-	>
+	<!-- The container for the game content, including the game title, description, and game board. -->
+	<div class="flex items-center flex-col w-[500px] p-10">
+		<!-- Container for the skull icon, which is rendered using a custom component. The color of the skull is determined by the 'skullColor' variable. -->
 		<div class="w-[20%]">
 			<Skull color={skullColor} />
 		</div>
-		<h1 class="ps-font-arcade text-white text-xl mt-5">Memory Minigame</h1>
-		<p class="ps-text-lightgrey mt-5">
+		<!-- The game title. -->
+		<h1 class="text-xl mt-5">Memory Minigame</h1>
+		<!-- The game description. -->
+		<p class="mt-5">
 			Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum quia
 			quidem eos soluta voluptatem ipsum, voluptates repudiandae! Dolorum
 			facere, aperiam, dolores inventore, odio perspiciatis animi non
 			quibusdam quidem minus libero?
 		</p>
-		<p class="ps-text-lightgrey mt-5">Some description</p>
+		<!-- Some additional game description. -->
+		<p class="mt-5">Some description</p>
+		<!-- Container for the game board, which is a 5x5 grid of cards. The container is bound to the 'gameContainer' variable. -->
 		<div
 			class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
 			bind:this={gameContainer}
 		/>
+		<!-- If the game is not active (i.e., the game is over), display a message indicating whether the player won or lost. -->
 		{#if !gameActive}
 			<div class="flex flex-1 items-center justify-center self-stretch">
 				{#if hackSuccess == true}
-					<h1 class="ps-font-arcade text-white text-xl mt-5">
-						System successfully hacked
-					</h1>
+					<h1 class="text-xl mt-5">System successfully hacked</h1>
 				{:else}
-					<h1 class="ps-font-arcade text-white text-3xl mt-5">
-						Firewall won
-					</h1>
+					<h1 class="text-3xl mt-5">Firewall won</h1>
 				{/if}
 			</div>
 		{/if}
