@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ConnectingGameMessageEnum } from '../enums/GameConnectionMessages';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import Skull from '../assets/svgs/Skull.svelte';
 	import MemoryGame from './MemoryGame.svelte';
 	import { EventHandler } from './../../utils/eventHandler';
@@ -24,17 +24,15 @@
 	async function connectToGame(): Promise<void> {
 		return new Promise((resolve) => {
 			let width = 0;
-			setTimeout(() => {
-				let interval = setInterval(() => {
-					width++;
-					loadingBar.style.width = `${width}%`;
+			let interval = setInterval(() => {
+				width++;
+				loadingBar.style.width = `${width}%`;
 
-					if (width === 100) {
-						clearInterval(interval);
-						resolve();
-					}
-				}, 30);
-			}, 1000);
+				if (width === 100) {
+					clearInterval(interval);
+					resolve();
+				}
+			}, 30);
 		});
 	}
 
@@ -82,4 +80,6 @@
 	</div>
 {/if}
 
-<MemoryGame />
+{#if !showLoading}
+	<MemoryGame />
+{/if}

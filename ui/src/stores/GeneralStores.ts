@@ -16,7 +16,7 @@ export function hideUi(): void {
 
 export function setupGame(data): void {
 	const game = data.data;
-	console.log(game);
+
 	switch (data.data.game) {
 		case GamesEnum.MemoryGame: {
 			gameSettings.set({

@@ -7,7 +7,6 @@
 	import { gameSettings } from './../stores/GameSettingsStore';
 
 	const skullColor: string = '#02f1b5';
-	const DEFAULT_TIME_LIMIT: number = 10000; // 10 seconds in milliseconds
 
 	/** The HTML element that contains the game.  */
 	let gameContainer: HTMLDivElement;
@@ -28,7 +27,7 @@
 	/** The number of answers to display during the game. */
 	let amountOfAnswers: number;
 	/** A boolean indicating whether the game is currently active. */
-	let gameActive: boolean;
+	let gameActive: boolean = true;
 	/** A boolean indicating whether the user successfully completed the game. */
 	let hackSuccess: boolean;
 	/** NUI event that should be called when the game has been completed */
@@ -61,21 +60,56 @@
 		correctInputs = [];
 		hackSuccess = false;
 		gameActive = false;
-		gameContainer.innerHTML = '';
 	}
 
 	/**
 	 * Sets up the game on mount by calling the `setupGame` function.
 	 * @returns {void}
 	 */
-	onMount(() => {
-		setupGame();
+	onMount(async () => {
+		// Set the game as active
+		gameActive = true;
+
+		// Add game squares to the board
+		await addSquares();
+
+		// Generate the answer for the game
+		await generateAnswer();
+
+		// Set the correct answers for the game
+		await setCorrectAnswers();
+
+		// Set the initial time remaining
+		await setTimer();
+
+		// Show the answer for a brief moment to the player
+		await showAnswer();
+
+		// Start timer and thereby the game
+		await startTimer();
 	});
+
+	async function setTimer(): Promise<void> {
+		return new Promise((resolve) => {
+			// Calculate the number of seconds and hundredths of a second remaining
+			const seconds: number = Math.floor(gameTime / 1000);
+			const hundredths: number = Math.floor((gameTime % 1000) / 10);
+
+			// Pad the hundredths part of the timer display string with a leading zero if necessary
+			const hundredthsString: string | number =
+				hundredths < 10 ? `0${hundredths}` : hundredths;
+
+			// Update the timer display in the DOM
+			time.innerHTML = `${seconds}.${hundredthsString}`;
+
+			resolve();
+		});
+	}
 
 	/**
 	 * Starts the game timer countdown
 	 */
-	function startTimer() {
+	async function startTimer(): Promise<void> {
 		// Get the start and end time of the game
 		const startTime = Date.now();
 		const endTime = startTime + gameTime;
@@ -113,9 +147,6 @@
 				// End the game with a false result
 				endGame(false);
 
-				// Clear the timer interval
-				clearInterval(timerInterval);
-
 				// Set the remaining time to -1
 				timeRemaining = -1;
 
@@ -128,33 +159,11 @@
 	/**
 	 * Stops the current timer interval
 	 */
-	function stopTimer() {
-		clearInterval(timerInterval);
-	}
-
-	/**
-	 * Sets up the game by initializing game variables and generating the initial game board.
-	 *
-	 * @returns {Promise<void>} A Promise that resolves once the game has been set up.
-	 */
-	async function setupGame(): Promise<void> {
-		// Set the game as active
-		gameActive = true;
-
-		// Add game squares to the board
-		await addSquares();
-
-		// Generate the answer for the game
-		await generateAnswer();
-
-		// Set the correct answers for the game
-		await setCorrectAnswers();
-
-		// Show the answer for a brief moment to the player
-		await showAnswer();
-
-		// Start timer and thereby the game
-		await startTimer();
+	async function stopTimer(): Promise<void> {
+		return new Promise((resolve) => {
+			clearInterval(timerInterval);
+			resolve();
+		});
 	}
 
 	/**
@@ -180,14 +189,6 @@
 	 * Generates 25 new input elements and appends them to a specified container element.
 	 * Each input element has a unique identifier and a click event listener that calls the `guessAnswer` function.
 	 *
-	 * This implementation uses event delegation to listen for clicks on the container element,
-	 * instead of adding individual event listeners to each input element. This can improve performance
-	 * by reducing the number of event listeners that need to be registered and unregistered as elements
-	 * are added and removed from the DOM. By using a template element and cloning it to create the new
-	 * input elements, this implementation also reduces the number of DOM manipulations that are needed.
-	 *
-	 * @async
-	 * @param {HTMLElement} gameContainer - The container element to which the input elements will be appended.
 	 * @returns {Promise<void>} A promise that resolves when all input elements have been appended.
 	 */
 	async function addSquares(): Promise<void> {
@@ -301,7 +302,7 @@
 		// Iterate over each input element and set its "data-correct" attribute and add it to the "correctInputs" array if necessary.
 		for (const input of inputs) {
 			// Determine whether the input is correct.
-			const isCorrect = correctAnswerSet.has(input.dataset.answer!);
+			const isCorrect = correctAnswerSet.has(input.dataset.index!);
 
 			// Set the "data-correct" attribute on the input element.
 			input.dataset.correct = isCorrect ? 'true' : 'false';
@@ -345,24 +346,23 @@
 	 * Ends the game and triggers the callback to the parent component.
 	 * @param success - Whether the game was completed successfully or not.
 	 */
-	function endGame(success: boolean): void {
+	async function endGame(success: boolean): Promise<void> {
 		// Stop game timer
-		stopTimer();
+		await stopTimer();
 
-		// Update game state
 		hackSuccess = success;
 		gameActive = false;
 
 		// Show the "end game" message and trigger the callback to the parent component
 		setTimeout(() => {
 			gameSettings.subscribe((setting: IGameSettings) => {
-				fetchNui(setting.triggerEvent, { success: success });
+				fetchNui(setting.triggerEvent, { success: hackSuccess });
 			});
 			showComponent.set(undefined);
-		}, 2000);
 
-		// Reset game settings and data
-		resetGame();
+			// Reset game settings and data
+			resetGame();
+		}, 2500);
 	}
 </script>
 
@@ -373,28 +373,34 @@
 		<div class="w-[20%]">
 			<Skull color={skullColor} />
 		</div>
-		<h1 class="ps-font-arcade text-white text-xl mt-5">Memory Minigame</h1>
-		<p class="ps-text-lightgrey mt-5">
-			Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum quia
-			quidem eos soluta voluptatem ipsum, voluptates repudiandae! Dolorum
-			facere, aperiam, dolores inventore, odio perspiciatis animi non
-			quibusdam quidem minus libero?
-		</p>
-		<p class="ps-text-lightgrey mt-5">Some description</p>
-		<div>Time Left: <span bind:this={time} /></div>
-		<div
-			class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
-			bind:this={gameContainer}
-		/>
+		{#if gameActive}
+			<h1 class="ps-font-arcade text-white text-xl mt-5">
+				Memory Minigame
+			</h1>
+			<p class="ps-text-lightgrey mt-5">
+				Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum
+				quia quidem eos soluta voluptatem ipsum, voluptates repudiandae!
+				Dolorum facere, aperiam, dolores inventore, odio perspiciatis
+				animi non quibusdam quidem minus libero?
+			</p>
+			<p class="ps-text-lightgrey mt-5">Some description</p>
+			<div class="text-white text-2xl">
+				Time Left: <span bind:this={time} />
+			</div>
+			<div
+				class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
+				bind:this={gameContainer}
+			/>
+		{/if}
 		{#if !gameActive}
 			<div class="flex flex-1 items-center justify-center self-stretch">
-				{#if hackSuccess == true}
-					<h1 class="ps-font-arcade text-white text-xl mt-5">
-						System successfully hacked
+				{#if hackSuccess}
+					<h1 class="text-white text-3xl mt-5 uppercase">
+						Access granted
 					</h1>
 				{:else}
-					<h1 class="ps-font-arcade text-white text-3xl mt-5">
-						Firewall won
+					<h1 class="text-white text-3xl mt-5 uppercase">
+						Access denied
 					</h1>
 				{/if}
 			</div>
