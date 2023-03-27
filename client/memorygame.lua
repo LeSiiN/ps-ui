@@ -1,6 +1,21 @@
+-- Variable to track whether a memory game is currently open
 local open = false
+
+-- Queue to store game parameters and callbacks for multiple concurrent games
 local memoryGameQueue = {}
 
+--[[
+    Function to start a new memory game.
+
+    Parameters:
+        - callback: A function to be called upon completion of the memory game.
+        - gameTime: (Optional) The length of the memory game in seconds (default is 10 seconds).
+        - amountOfAnswers: The number of answers in the sequence to be remembered.
+        - maxAnswersIncorrect: The maximum number of incorrect answers allowed before the game ends.
+        - triggerEvent: (Optional) The name of the event to trigger when the game ends (default is 'memorygame-callback').
+
+    Returns: none
+]]
 local function MemoryGame(callback, gameTime, amountOfAnswers, maxAnswersIncorrect, triggerEvent)
     if gameTime == nil then
         gameTime = 10
@@ -35,6 +50,15 @@ local function MemoryGame(callback, gameTime, amountOfAnswers, maxAnswersIncorre
     end
 end
 
+--[[
+    Callback function to handle completion of a memory game.
+
+    Parameters:
+        - data: A table containing information about the completed game.
+        - cb: A callback function to be called upon completion of this function.
+
+    Returns: none
+]]
 RegisterNUICallback('memorygame-callback', function(data, cb)
     SetNuiFocus(false, false)
     local success = data.success
@@ -66,4 +90,5 @@ RegisterNUICallback('memorygame-callback', function(data, cb)
     cb('ok')
 end)
 
+-- Function to export the Memory
 exports("MemoryGame", MemoryGame)
