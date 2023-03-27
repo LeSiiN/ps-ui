@@ -182,34 +182,40 @@
 	}
 
 	/**
-	 * Handles a user's guess when they click on a square.
-	 * If the guess is correct, increments the `answersCorrect` counter and checks if the game has ended.
-	 * If the guess is incorrect, increments the `answersIncorrect` counter and checks if the maximum number of incorrect answers has been reached.
-	 * Adds the `correctAnswers` or `incorrectAnswers` class to the clicked square depending on the guess.
-	 *
-	 * @param event - The click event object.
+	 * Handles the user's guess and updates the game state accordingly.
+	 * @param event - The click or pointer event that triggered the guess.
 	 */
-	function guessAnswer(event: any): void {
-		const correctAnswer: string =
-			event.target.attributes.getNamedItem('data-correct').value;
+	function guessAnswer(event: MouseEvent | PointerEvent): void {
+		// Retrieve the target element of the event and the value of its "data-correct" attribute.
+		const target = event.target as HTMLElement;
+		const correctAnswer = target.dataset.correct;
 
 		if (correctAnswer === 'true') {
+			// Increment the count of correct answers and end the game if all answers are correct.
 			answersCorrect++;
 
 			if (answersCorrect === answer.length) {
 				endGame(true);
 			}
-			event.target.classList.add('correctAnswers');
+
+			// Add the "correctAnswers" class to the target element if it doesn't already have it.
+			if (!target.classList.contains('correctAnswers')) {
+				target.classList.add('correctAnswers');
+			}
 		}
 
 		if (correctAnswer === 'false') {
+			// Increment the count of incorrect answers and end the game if the maximum number of incorrect answers is reached.
 			answersIncorrect++;
 
-			if (answersIncorrect == maxAnswersIncorrect) {
+			if (answersIncorrect === maxAnswersIncorrect) {
 				endGame(false);
 			}
 
-			event.target.classList.add('incorrectAnswers');
+			// Add the "incorrectAnswers" class to the target element if it doesn't already have it.
+			if (!target.classList.contains('incorrectAnswers')) {
+				target.classList.add('incorrectAnswers');
+			}
 		}
 	}
 
