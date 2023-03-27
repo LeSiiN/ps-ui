@@ -109,32 +109,58 @@
 	}
 
 	/**
-	 * Generates 25 clickable squares and adds them to the game container.
-	 * Each square has the classes 'ps-border-green', 'ps-bg-green-w-opacity', 'cursor-pointer',
-	 * and 'input', and triggers the 'guessAnswer' function when clicked.
-	 * Returns a Promise that resolves when the squares have been added.
+	 * Generates 25 new input elements and appends them to a specified container element.
+	 * Each input element has a unique identifier and a click event listener that calls the `guessAnswer` function.
+	 *
+	 * This implementation uses event delegation to listen for clicks on the container element,
+	 * instead of adding individual event listeners to each input element. This can improve performance
+	 * by reducing the number of event listeners that need to be registered and unregistered as elements
+	 * are added and removed from the DOM. By using a template element and cloning it to create the new
+	 * input elements, this implementation also reduces the number of DOM manipulations that are needed.
+	 *
+	 * @async
+	 * @param {HTMLElement} gameContainer - The container element to which the input elements will be appended.
+	 * @returns {Promise<void>} A promise that resolves when all input elements have been appended.
 	 */
 	async function addSquares(): Promise<void> {
-		return new Promise((resolve) => {
-			for (let index = 0; index < 25; index++) {
-				let input = document.createElement('div');
+		// Create a template element that will be used to generate new input elements
+		const template = document.createElement('div');
+		template.classList.add(
+			'ps-border-green',
+			'ps-bg-green-w-opacity',
+			'cursor-pointer',
+			'input'
+		);
+		template.setAttribute('data-index', '0');
+		template.addEventListener('click', (event: PointerEvent) =>
+			guessAnswer(event)
+		);
 
-				input.classList.add(
-					'ps-border-green',
-					'ps-bg-green-w-opacity',
-					'cursor-pointer',
-					'input'
-				);
-				input.addEventListener('click', (event: PointerEvent) =>
-					guessAnswer(event)
-				);
-				input.setAttribute('data-answer', `${index}`);
+		// Generate 25 new input elements and append them to the container element
+		for (let index = 1; index <= 25; index++) {
+			const input = template.cloneNode() as HTMLDivElement;
+			input.setAttribute('data-index', `${index}`);
+			gameContainer.appendChild(input);
+		}
 
-				gameContainer?.append(input);
-			}
-
+		// Add a single click event listener to the container element, and use event delegation
+		// to handle clicks on individual input elements. This can improve performance by reducing
+		// the number of event listeners that need to be registered and unregistered.
+		const promise = new Promise<void>((resolve) => {
+			gameContainer.addEventListener('click', (event: MouseEvent) => {
+				const target = event.target as HTMLElement;
+				if (target.classList.contains('input')) {
+					const index = parseInt(
+						target.getAttribute('data-index') || ''
+					);
+					if (!isNaN(index)) {
+						guessAnswer(event);
+					}
+				}
+			});
 			resolve();
 		});
+		return promise;
 	}
 
 	/**
