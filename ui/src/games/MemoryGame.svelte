@@ -1,17 +1,18 @@
 <script lang="ts">
 	import type { IGameSettings } from './../interfaces/IGameSettings';
 	import { showComponent } from './../stores/GeneralStores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import fetchNui from './../../utils/fetch';
 	import Skull from './../assets/svgs/Skull.svelte';
 	import { gameSettings } from './../stores/GameSettingsStore';
 
 	const skullColor: string = '#02f1b5';
+	const DEFAULT_TIME_LIMIT: number = 10000; // 10 seconds in milliseconds
 
 	/** The HTML element that contains the game.  */
 	let gameContainer: HTMLDivElement;
-	/** A list of HTML div elements that represent the answer inputs. */
-	let inputs: NodeListOf<HTMLDivElement>;
+	/** The HTML element that contains the timer */
+	let time: HTMLSpanElement;
 	/** An array of HTML div elements that represent the correct answer inputs. */
 	let correctInputs: Array<HTMLDivElement> = [];
 	/** An array that stores the current answer sequence. */
@@ -32,6 +33,10 @@
 	let hackSuccess: boolean;
 	/** NUI event that should be called when the game has been completed */
 	let triggerEvent: string;
+	/** Time remaining before the game ends */
+	let timeRemaining: number;
+	/** Holds the interval timer for the game countdown */
+	let timerInterval: number | null = null;
 
 	/**
 	 * Subscribes to the `gameSettings` observable and updates the relevant variables.
@@ -40,7 +45,7 @@
 	 */
 	gameSettings.subscribe((setting: IGameSettings) => {
 		maxAnswersIncorrect = setting.maxAnswersIncorrect || 2;
-		gameTime = setting.gameTime || 10;
+		gameTime = setting.gameTime * 1000 || 10000;
 		triggerEvent = setting.triggerEvent || '';
 		amountOfAnswers = setting.amountOfAnswers || 15;
 	});
@@ -68,6 +73,66 @@
 	});
 
 	/**
+	 * Starts the game timer countdown
+	 */
+	function startTimer() {
+		// Get the start and end time of the game
+		const startTime = Date.now();
+		const endTime = startTime + gameTime;
+
+		// Set the remaining time to the game time
+		timeRemaining = gameTime;
+
+		// Initialize the previous time to 0
+		let prevTime = 0;
+
+		// Set an interval to update the timer display every 10 milliseconds
+		timerInterval = setInterval(() => {
+			// Get the current time
+			const now = Date.now();
+
+			// Calculate the remaining time
+			timeRemaining = endTime - now;
+
+			// Calculate the number of seconds and hundredths of a second remaining
+			const seconds: number = Math.floor(timeRemaining / 1000);
+			const hundredths: number = Math.floor((timeRemaining % 1000) / 10);
+
+			// Pad the hundredths part of the timer display string with a leading zero if necessary
+			const hundredthsString: string | number =
+				hundredths < 10 ? `0${hundredths}` : hundredths;
+
+			// Update the timer display in the DOM
+			time.innerHTML = `${seconds}.${hundredthsString}`;
+
+			// Set the previous time to the current time
+			prevTime = seconds;
+
+			// Check if the time has run out
+			if (timeRemaining <= 0) {
+				// End the game with a false result
+				endGame(false);
+
+				// Clear the timer interval
+				clearInterval(timerInterval);
+
+				// Set the remaining time to -1
+				timeRemaining = -1;
+
+				// Display 0.00 when the timer has finished counting down
+				time.innerHTML = `0.00`;
+			}
+		}, 10);
+	}
+
+	/**
+	 * Stops the current timer interval
+	 */
+	function stopTimer() {
+		clearInterval(timerInterval);
+	}
+
+	/**
 	 * Sets up the game by initializing game variables and generating the initial game board.
 	 *
 	 * @returns {Promise<void>} A Promise that resolves once the game has been set up.
@@ -87,6 +152,9 @@
 
 		// Show the answer for a brief moment to the player
 		await showAnswer();
+
+		// Start timer and thereby the game
+		await startTimer();
 	}
 
 	/**
@@ -220,27 +288,32 @@
 	}
 
 	/**
-	 * Finds all HTML elements with the class 'input' and adds a 'data-correct' attribute
-	 * with the value 'true' to those that have a 'data-answer' attribute that matches
-	 * one of the values in the 'answer' array.
-	 *
-	 * @returns A Promise that resolves when the correct answers have been marked.
+	 * Sets the "data-correct" attribute on each input element based on whether its "data-answer" attribute matches
+	 * one of the correct answers. Also adds the input element to the "correctInputs" array if it is correct.
+	 * @returns A Promise that resolves when all inputs have been processed.
 	 */
 	async function setCorrectAnswers(): Promise<void> {
-		return new Promise((resolve) => {
-			inputs = document.querySelectorAll('.input');
+		// Retrieve the list of input elements and the set of correct answers.
+		const inputs: NodeListOf<HTMLDivElement> =
+			document.querySelectorAll('.input');
+		const correctAnswerSet = new Set(answer);
 
-			inputs.forEach((input: HTMLDivElement) => {
-				if (answer.includes(input.getAttribute('data-answer'))) {
-					input.setAttribute('data-correct', 'true');
-					correctInputs.push(input);
-				} else {
-					input.setAttribute('data-correct', 'false');
-				}
-			});
+		// Iterate over each input element and set its "data-correct" attribute and add it to the "correctInputs" array if necessary.
+		for (const input of inputs) {
+			// Determine whether the input is correct.
+			const isCorrect = correctAnswerSet.has(input.dataset.answer!);
 
-			resolve();
-		});
+			// Set the "data-correct" attribute on the input element.
+			input.dataset.correct = isCorrect ? 'true' : 'false';
+
+			// If the input is correct, add it to the "correctInputs" array.
+			if (isCorrect) {
+				correctInputs.push(input);
+			}
+		}
+
+		// Resolve the Promise once all inputs have been processed.
+		return Promise.resolve();
 	}
 
 	/**
@@ -273,6 +346,9 @@
 	 * @param success - Whether the game was completed successfully or not.
 	 */
 	function endGame(success: boolean): void {
+		// Stop game timer
+		stopTimer();
+
 		// Update game state
 		hackSuccess = success;
 		gameActive = false;
@@ -288,15 +364,6 @@
 		// Reset game settings and data
 		resetGame();
 	}
-
-	/** Remove all event listeners attached to the input elements to prevent memory leaks */
-	onDestroy(() => {
-		requestAnimationFrame(() => {
-			inputs.forEach((input: HTMLDivElement) => {
-				input.removeEventListener(null, null);
-			});
-		});
-	});
 </script>
 
 <div class="flex items-center justify-center min-h-screen ">
@@ -314,6 +381,7 @@
 			quibusdam quidem minus libero?
 		</p>
 		<p class="ps-text-lightgrey mt-5">Some description</p>
+		<div>Time Left: <span bind:this={time} /></div>
 		<div
 			class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
 			bind:this={gameContainer}
