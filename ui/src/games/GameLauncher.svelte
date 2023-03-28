@@ -5,6 +5,8 @@
 	import MemoryGame from './MemoryGame.svelte';
 	import { EventHandler } from './../../utils/eventHandler';
 	import * as mock from './../../utils/mockEvent';
+	import { currentGameActive } from './../stores/GameSettingsStore';
+	import { GamesEnum } from './../enums/GamesEnum';
 
 	EventHandler();
 	mock.newMemoryGameMock();
@@ -81,5 +83,7 @@
 {/if}
 
 {#if !showLoading}
-	<MemoryGame />
+	{#if $currentGameActive === GamesEnum.MemoryGame}
+		<MemoryGame />
+	{/if}
 {/if}
