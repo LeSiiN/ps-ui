@@ -379,15 +379,8 @@
 			<h1 class="ps-font-arcade text-white text-xl mt-5">
 				Memory Minigame
 			</h1>
-			<p class="ps-text-lightgrey mt-5">
-				Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum
-				quia quidem eos soluta voluptatem ipsum, voluptates repudiandae!
-				Dolorum facere, aperiam, dolores inventore, odio perspiciatis
-				animi non quibusdam quidem minus libero?
-			</p>
-			<p class="ps-text-lightgrey mt-5">Some description</p>
-			<div class="text-white text-2xl">
-				Time Left: <span bind:this={time} />
+			<div class="text-white text-2xl mt-14">
+				Time left: <span bind:this={time} />
 			</div>
 			<div
 				class="h-[440px] w-[440px] mt-14 grid grid-cols-5 grid-rows-5 gap-x-[10px] gap-y-[10px]"
