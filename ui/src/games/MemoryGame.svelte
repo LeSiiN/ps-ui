@@ -111,19 +111,19 @@
 	 */
 	async function startTimer(): Promise<void> {
 		// Get the start and end time of the game
-		const startTime = Date.now();
-		const endTime = startTime + gameTime;
+		const startTime: number = Date.now();
+		const endTime: number = startTime + gameTime;
 
 		// Set the remaining time to the game time
 		timeRemaining = gameTime;
 
 		// Initialize the previous time to 0
-		let prevTime = 0;
+		let prevTime: number = 0;
 
 		// Set an interval to update the timer display every 10 milliseconds
 		timerInterval = setInterval(() => {
 			// Get the current time
-			const now = Date.now();
+			const now: number = Date.now();
 
 			// Calculate the remaining time
 			timeRemaining = endTime - now;
@@ -193,7 +193,7 @@
 	 */
 	async function addSquares(): Promise<void> {
 		// Create a template element that will be used to generate new input elements
-		const template = document.createElement('div');
+		const template: HTMLDivElement = document.createElement('div');
 		template.classList.add(
 			'ps-border-green',
 			'ps-bg-green-w-opacity',
@@ -219,7 +219,7 @@
 			gameContainer.addEventListener('click', (event: MouseEvent) => {
 				const target = event.target as HTMLElement;
 				if (target.classList.contains('input')) {
-					const index = parseInt(
+					const index: number = parseInt(
 						target.getAttribute('data-index') || ''
 					);
 					if (!isNaN(index)) {
@@ -241,7 +241,7 @@
 	async function generateAnswer(): Promise<void> {
 		return new Promise((resolve) => {
 			for (let answers = 0; answers < amountOfAnswers; answers++) {
-				const number = randomNumber(0, 25);
+				const number: string = randomNumber(0, 25);
 
 				answer.push(number);
 			}
@@ -257,7 +257,7 @@
 	function guessAnswer(event: MouseEvent | PointerEvent): void {
 		// Retrieve the target element of the event and the value of its "data-correct" attribute.
 		const target = event.target as HTMLElement;
-		const correctAnswer = target.dataset.correct;
+		const correctAnswer: string = target.dataset.correct;
 
 		if (correctAnswer === 'true') {
 			// Increment the count of correct answers and end the game if all answers are correct.
@@ -302,7 +302,9 @@
 		// Iterate over each input element and set its "data-correct" attribute and add it to the "correctInputs" array if necessary.
 		for (const input of inputs) {
 			// Determine whether the input is correct.
-			const isCorrect = correctAnswerSet.has(input.dataset.index!);
+			const isCorrect: boolean = correctAnswerSet.has(
+				input.dataset.index!
+			);
 
 			// Set the "data-correct" attribute on the input element.
 			input.dataset.correct = isCorrect ? 'true' : 'false';
