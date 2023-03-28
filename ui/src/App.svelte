@@ -33,7 +33,7 @@
 		{/if}
 
 		{#if $showComponent === UIComponentsEnum.Connecting}
-			<GameLauncher game={GamesEnum.NumberMaze} />
+			<GameLauncher />
 		{/if}
 
 		{#if $showComponent === UIComponentsEnum.MemoryGame}
