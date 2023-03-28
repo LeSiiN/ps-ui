@@ -23,9 +23,9 @@ export function setupGame(data): void {
 		case GamesEnum.MemoryGame: {
 			gameSettings.set({
 				game: 'MemoryGame',
-				gameTime: game.gameTime || 10,
-				amountOfAnswers: game.amountOfAnswers || 15,
-				maxAnswersIncorrect: game.maxAnswersIncorrect || 2,
+				gameTime: game.gameTime,
+				amountOfAnswers: game.amountOfAnswers,
+				maxAnswersIncorrect: game.maxAnswersIncorrect,
 				triggerEvent: game.triggerEvent || 'memorygame-callback',
 			});
 		}

@@ -12,7 +12,7 @@ export function newMemoryGameMock() {
 			data: {
 				game: 'MemoryGame',
 				amountOfAnswers: 15,
-				gameTime: 10,
+				gameTime: 5,
 				maxAnswersIncorrect: 2,
 				triggerEvent: '',
 			},
