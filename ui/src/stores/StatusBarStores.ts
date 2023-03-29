@@ -1,7 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
 import type { IStatusBar } from '../interfaces/IStatusBar';
-import { UIComponentsEnum } from '../enums/UIComponentsEnum';
-import { hideUi, showUi } from './GeneralStores';
 
 export const statusBarStore: Writable<IStatusBar> = writable({
 	title: '',
