@@ -32,7 +32,7 @@ export function setupGame(data): void {
 				gameTime: game.gameTime,
 				amountOfAnswers: game.amountOfAnswers,
 				maxAnswersIncorrect: game.maxAnswersIncorrect,
-				triggerEvent: game.triggerEvent || 'memorygame-callback',
+				triggerEvent: game.triggerEvent,
 			});
 		}
 	}

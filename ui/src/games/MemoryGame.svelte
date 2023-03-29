@@ -46,7 +46,7 @@
 	gameSettings.subscribe((setting: IGameSettings) => {
 		maxAnswersIncorrect = setting.maxAnswersIncorrect || 2;
 		gameTime = setting.gameTime * 1000 || 10000;
-		triggerEvent = setting.triggerEvent || '';
+		triggerEvent = setting.triggerEvent || 'memorygame-callback';
 		amountOfAnswers = setting.amountOfAnswers || 15;
 	});
 
