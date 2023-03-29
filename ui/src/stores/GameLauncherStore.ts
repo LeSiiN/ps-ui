@@ -5,7 +5,13 @@ import { showComponent } from './GeneralStores';
 import type { IGameSettings } from './../interfaces/IGameSettings';
 import { writable, type Writable } from 'svelte/store';
 
-export const gameSettings: Writable<IGameSettings> = writable({});
+export const gameSettings: Writable<IGameSettings> = writable({
+	game: '',
+	amountOfAnswers: 0,
+	gameTime: 0,
+	maxAnswersIncorrect: 0,
+	triggerEvent: '',
+});
 export const currentGameActive: Writable<GamesEnum> | undefined = writable();
 export const connectionText: Writable<ConnectingGameMessageEnum> = writable();
 export const showLoading: Writable<boolean> = writable();
