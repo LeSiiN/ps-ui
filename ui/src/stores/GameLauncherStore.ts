@@ -15,8 +15,6 @@ export function setupGame(data): void {
 
 	const game = data.data;
 
-	console.log(data);
-
 	switch (data.data.game) {
 		case GamesEnum.MemoryGame: {
 			gameSettings.set({
