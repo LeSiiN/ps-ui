@@ -5,7 +5,7 @@ import { showInput } from './../src/stores/InputStores';
 import { onMount, onDestroy } from 'svelte';
 import fetchNui from './fetch';
 import { UIComponentsEnum } from './../src/enums/UIComponentsEnum';
-import { setupGame } from './../src/stores/GameSetupStores';
+import { setupGame } from '../src/stores/GameLauncherStore';
 
 interface nuiMessage {
 	data: {

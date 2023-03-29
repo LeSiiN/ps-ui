@@ -1,11 +1,11 @@
-import { UIComponentsEnum } from './../enums/UIComponentsEnum';
-import { GamesEnum } from './../enums/GamesEnum';
+import { UIComponentsEnum } from '../enums/UIComponentsEnum';
+import { GamesEnum } from '../enums/GamesEnum';
 import {
 	connectionText,
 	currentGameActive,
 	gameSettings,
 } from './GameSettingsStore';
-import { ConnectingGameMessageEnum } from './../enums/GameConnectionMessages';
+import { ConnectingGameMessageEnum } from '../enums/GameConnectionMessages';
 import { showComponent } from './GeneralStores';
 
 export function setupGame(data): void {
