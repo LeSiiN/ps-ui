@@ -10,13 +10,14 @@ import { showComponent } from './GeneralStores';
 
 export function setupGame(data): void {
 	showComponent.set(UIComponentsEnum.Game);
-	connectionText.set(ConnectingGameMessageEnum.Connecting);
-	currentGameActive.set(GamesEnum.MemoryGame);
 
 	const game = data.data;
 
 	switch (data.data.game) {
 		case GamesEnum.MemoryGame: {
+			currentGameActive.set(GamesEnum.MemoryGame);
+			connectionText.set(ConnectingGameMessageEnum.Connecting);
+
 			gameSettings.set({
 				game: GamesEnum.MemoryGame,
 				gameTime: game.gameTime || 2,
