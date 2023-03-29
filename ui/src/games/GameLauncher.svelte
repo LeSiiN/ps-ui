@@ -7,7 +7,7 @@
 		connectionText,
 		currentGameActive,
 		showLoading,
-	} from './../stores/GameSettingsStore';
+	} from './../stores/GameLauncherStore';
 	import { GamesEnum } from './../enums/GamesEnum';
 
 	const skullColor: string = '#02f1b5';

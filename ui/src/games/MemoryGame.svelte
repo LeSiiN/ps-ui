@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { showLoading } from './../stores/GameSettingsStore';
 	import type { IGameSettings } from './../interfaces/IGameSettings';
 	import { showComponent } from './../stores/GeneralStores';
 	import { onMount } from 'svelte';
 	import fetchNui from './../../utils/fetch';
 	import Skull from './../assets/svgs/Skull.svelte';
-	import { gameSettings } from './../stores/GameSettingsStore';
+	import { gameSettings } from './../stores/GameLauncherStore';
 
 	const skullColor: string = '#02f1b5';
 

@@ -1,12 +1,14 @@
 import { UIComponentsEnum } from '../enums/UIComponentsEnum';
 import { GamesEnum } from '../enums/GamesEnum';
-import {
-	connectionText,
-	currentGameActive,
-	gameSettings,
-} from './GameSettingsStore';
 import { ConnectingGameMessageEnum } from '../enums/GameConnectionMessages';
 import { showComponent } from './GeneralStores';
+import type { IGameSettings } from './../interfaces/IGameSettings';
+import { writable, type Writable } from 'svelte/store';
+
+export const gameSettings: Writable<IGameSettings> = writable({});
+export const currentGameActive: Writable<GamesEnum> | undefined = writable();
+export const connectionText: Writable<ConnectingGameMessageEnum> = writable();
+export const showLoading: Writable<boolean> = writable();
 
 export function setupGame(data): void {
 	showComponent.set(UIComponentsEnum.Game);
