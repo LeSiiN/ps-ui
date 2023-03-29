@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { showLoading } from './../stores/GameSettingsStore';
 	import type { IGameSettings } from './../interfaces/IGameSettings';
 	import { showComponent } from './../stores/GeneralStores';
 	import { onMount } from 'svelte';
@@ -90,70 +91,76 @@
 	});
 
 	async function setTimer(): Promise<void> {
-		return new Promise((resolve) => {
-			// Calculate the number of seconds and hundredths of a second remaining
-			const seconds: number = Math.floor(gameTime / 1000);
-			const hundredths: number = Math.floor((gameTime % 1000) / 10);
+		if (time) {
+			return new Promise((resolve) => {
+				// Calculate the number of seconds and hundredths of a second remaining
+				const seconds: number = Math.floor(gameTime / 1000);
+				const hundredths: number = Math.floor((gameTime % 1000) / 10);
 
-			// Pad the hundredths part of the timer display string with a leading zero if necessary
-			const hundredthsString: string | number =
-				hundredths < 10 ? `0${hundredths}` : hundredths;
+				// Pad the hundredths part of the timer display string with a leading zero if necessary
+				const hundredthsString: string | number =
+					hundredths < 10 ? `0${hundredths}` : hundredths;
 
-			// Update the timer display in the DOM
-			time.innerHTML = `${seconds}.${hundredthsString}`;
+				// Update the timer display in the DOM
+				time.innerHTML = `${seconds}.${hundredthsString}`;
 
-			resolve();
-		});
+				resolve();
+			});
+		}
 	}
 
 	/**
 	 * Starts the game timer countdown
 	 */
 	async function startTimer(): Promise<void> {
-		// Get the start and end time of the game
-		const startTime: number = Date.now();
-		const endTime: number = startTime + gameTime;
+		if (time) {
+			// Get the start and end time of the game
+			const startTime: number = Date.now();
+			const endTime: number = startTime + gameTime;
 
-		// Set the remaining time to the game time
-		timeRemaining = gameTime;
+			// Set the remaining time to the game time
+			timeRemaining = gameTime;
 
-		// Initialize the previous time to 0
-		let prevTime: number = 0;
+			// Initialize the previous time to 0
+			let prevTime: number = 0;
 
-		// Set an interval to update the timer display every 10 milliseconds
-		timerInterval = setInterval(() => {
-			// Get the current time
-			const now: number = Date.now();
+			// Set an interval to update the timer display every 10 milliseconds
+			timerInterval = setInterval(() => {
+				// Get the current time
+				const now: number = Date.now();
 
-			// Calculate the remaining time
-			timeRemaining = endTime - now;
+				// Calculate the remaining time
+				timeRemaining = endTime - now;
 
-			// Calculate the number of seconds and hundredths of a second remaining
-			const seconds: number = Math.floor(timeRemaining / 1000);
-			const hundredths: number = Math.floor((timeRemaining % 1000) / 10);
+				// Calculate the number of seconds and hundredths of a second remaining
+				const seconds: number = Math.floor(timeRemaining / 1000);
+				const hundredths: number = Math.floor(
+					(timeRemaining % 1000) / 10
+				);
 
-			// Pad the hundredths part of the timer display string with a leading zero if necessary
-			const hundredthsString: string | number =
-				hundredths < 10 ? `0${hundredths}` : hundredths;
+				// Pad the hundredths part of the timer display string with a leading zero if necessary
+				const hundredthsString: string | number =
+					hundredths < 10 ? `0${hundredths}` : hundredths;
 
-			// Update the timer display in the DOM
-			time.innerHTML = `${seconds}.${hundredthsString}`;
+				// Update the timer display in the DOM
+				time.innerHTML = `${seconds}.${hundredthsString}`;
 
-			// Set the previous time to the current time
-			prevTime = seconds;
+				// Set the previous time to the current time
+				prevTime = seconds;
 
-			// Check if the time has run out
-			if (timeRemaining <= 0) {
-				// End the game with a false result
-				endGame(false);
+				// Check if the time has run out
+				if (timeRemaining <= 0) {
+					// End the game with a false result
+					endGame(false);
 
-				// Set the remaining time to -1
-				timeRemaining = -1;
+					// Set the remaining time to -1
+					timeRemaining = -1;
 
-				// Display 0.00 when the timer has finished counting down
-				time.innerHTML = `0.00`;
-			}
-		}, 10);
+					// Display 0.00 when the timer has finished counting down
+					time.innerHTML = `0.00`;
+				}
+			}, 10);
+		}
 	}
 
 	/**
