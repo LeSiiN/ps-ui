@@ -8,14 +8,17 @@
 
 	// Enums
 	import { UIComponentsEnum } from './enums/UIComponentsEnum';
-	import { GamesEnum } from './enums/GamesEnum';
 
 	// PS-UI components
 	import StatusBar from './components/StatusBar.svelte';
 	import Menu from './components/Menu.svelte';
 	import Input from './components/Input.svelte';
 	import GameLauncher from './games/GameLauncher.svelte';
-	import MemoryGame from './games/MemoryGame.svelte';
+	import { EventHandler } from './../utils/eventHandler';
+	import { newMemoryGameMock } from './../utils/mockEvent';
+
+	EventHandler();
+	newMemoryGameMock();
 </script>
 
 {#if $showUi === true}
@@ -32,12 +35,8 @@
 			<Input />
 		{/if}
 
-		{#if $showComponent === UIComponentsEnum.Connecting}
+		{#if $showComponent === UIComponentsEnum.Game}
 			<GameLauncher />
-		{/if}
-
-		{#if $showComponent === UIComponentsEnum.MemoryGame}
-			<MemoryGame />
 		{/if}
 	</main>
 {/if}
