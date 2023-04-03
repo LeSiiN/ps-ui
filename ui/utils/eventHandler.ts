@@ -6,6 +6,7 @@ import { onMount, onDestroy } from 'svelte';
 import fetchNui from './fetch';
 import { UIComponentsEnum } from './../src/enums/UIComponentsEnum';
 import { setupGame } from '../src/stores/GameLauncherStore';
+import { showImage } from './../src/stores/ImageStore';
 
 interface nuiMessage {
 	data: {
@@ -27,6 +28,9 @@ export function EventHandler() {
 			}
 			case 'ShowInput': {
 				showInput(event.data as any);
+			}
+			case 'ShowImage': {
+				showImage(event.data as any);
 			}
 			case 'hideUi': {
 				hideUi();

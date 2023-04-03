@@ -1,17 +1,30 @@
+import type { IImage } from './../src/interfaces/IImage';
 export default function mockEventCall(data: unknown = {}) {
 	window.dispatchEvent(new MessageEvent('message', { data }));
 }
 
-export function newMemoryGameMock() {
+// export function newMemoryGameMock() {
+// 	setTimeout(() => {
+// 		mockEventCall({
+// 			action: 'newMemoryGame',
+// 			data: {
+// 				game: 'MemoryGame',
+// 				amountOfAnswers: 1,
+// 				gameTime: 5,
+// 				maxAnswersIncorrect: 2,
+// 				triggerEvent: '',
+// 			},
+// 		});
+// 	}, 100);
+// }
+
+export function showImageMock() {
 	setTimeout(() => {
 		mockEventCall({
-			action: 'newMemoryGame',
+			action: 'ShowImage',
 			data: {
-				game: 'MemoryGame',
-				amountOfAnswers: 1,
-				gameTime: 5,
-				maxAnswersIncorrect: 2,
-				triggerEvent: '',
+				show: true,
+				url: '',
 			},
 		});
 	}, 100);

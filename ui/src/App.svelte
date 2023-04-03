@@ -15,10 +15,11 @@
 	import Input from './components/Input.svelte';
 	import GameLauncher from './games/GameLauncher.svelte';
 	import { EventHandler } from './../utils/eventHandler';
-	import { newMemoryGameMock } from './../utils/mockEvent';
+	import { showImageMock } from './../utils/mockEvent';
+	import Image from './components/Image.svelte';
 
 	EventHandler();
-	newMemoryGameMock();
+	showImageMock();
 </script>
 
 {#if $showUi === true}
@@ -38,5 +39,9 @@
 		{#if $showComponent === UIComponentsEnum.Game}
 			<GameLauncher />
 		{/if}
+		{#if $showComponent === UIComponentsEnum.Image}
+			<Image />
+		{/if}
+		yep
 	</main>
 {/if}
