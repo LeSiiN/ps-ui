@@ -17,9 +17,9 @@
 	import { EventHandler } from './../utils/eventHandler';
 	import { showImageMock } from './../utils/mockEvent';
 	import Image from './components/Image.svelte';
+	import Scrambler from './games/Scrambler.svelte';
 
 	EventHandler();
-	showImageMock();
 </script>
 
 {#if $showUi === true}
@@ -42,6 +42,5 @@
 		{#if $showComponent === UIComponentsEnum.Image}
 			<Image />
 		{/if}
-		yep
 	</main>
 {/if}

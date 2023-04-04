@@ -1,6 +1,5 @@
 export enum GamesEnum {
-	Thermite = 'Thermite',
-	Var = 'Var',
+	Scrambler = 'Scramber',
 	NumberMaze = 'NumberMaze',
-	MemoryGame = 'MemoryGame',
+	Memory = 'MemoryGame',
 }

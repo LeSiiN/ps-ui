@@ -9,6 +9,8 @@
 		showLoading,
 	} from './../stores/GameLauncherStore';
 	import { GamesEnum } from './../enums/GamesEnum';
+	import Scrambler from './Scrambler.svelte';
+	import NumberMaze from './NumberMaze.svelte';
 
 	const skullColor: string = '#02f1b5';
 
@@ -70,7 +72,15 @@
 {/if}
 
 {#if !$showLoading}
-	{#if $currentGameActive === GamesEnum.MemoryGame}
+	{#if $currentGameActive === GamesEnum.Memory}
 		<MemoryGame />
 	{/if}
+	{#if $currentGameActive === GamesEnum.Scrambler}
+		<Scrambler />
+	{/if}
+	{#if $currentGameActive === GamesEnum.NumberMaze}
+		<NumberMaze />
+	{/if}
 {/if}
+apisd
+<Scrambler />
