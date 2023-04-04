@@ -37,6 +37,7 @@ export function EventHandler() {
 				hideUi();
 				break;
 			case 'MemoryGame':
+				console.log(Object.values(event.data));
 				setupGame(event.data as any);
 				break;
 		}
