@@ -6,7 +6,7 @@ export default function mockEventCall(data: unknown = {}) {
 export function newMemoryGameMock() {
 	setTimeout(() => {
 		mockEventCall({
-			action: 'newMemoryGame',
+			action: 'MemoryGame',
 			data: {
 				game: 'MemoryGame',
 				amountOfAnswers: 1,
@@ -24,7 +24,7 @@ export function showImageMock() {
 			action: 'ShowImage',
 			data: {
 				show: true,
-				url: 'https://i.ytimg.com/vi/1I_AWK_BCRc/maxresdefault.jpg',
+				url: 'https://i.ytimg.com/vi/7V15_-32iCU/maxresdefault.jpg',
 			},
 		});
 	}, 100);

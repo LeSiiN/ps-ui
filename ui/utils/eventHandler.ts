@@ -16,8 +16,9 @@ interface nuiMessage {
 }
 
 export function EventHandler() {
+	console.trace();
+
 	function mainEvent(event: nuiMessage) {
-		console.log(Object.values(event));
 		showUi.set(true);
 
 		switch (event.data.action) {
