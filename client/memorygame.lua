@@ -8,15 +8,15 @@ local memoryGameQueue = {}
     Function to start a new memory game.
 
     Parameters:
-        - callback: A function to be called upon completion of the memory game.
-        - gameTime: (Optional) The length of the memory game in seconds (default is 10 seconds).
-        - amountOfAnswers: The number of answers in the sequence to be remembered.
-        - maxAnswersIncorrect: The maximum number of incorrect answers allowed before the game ends.
+    - gameTime: (Optional) The length of the memory game in seconds (default is 10 seconds).
+    - amountOfAnswers: (Optional) The number of answers in the sequence to be remembered.
+    - maxAnswersIncorrect: (Optional) The maximum number of incorrect answers allowed before the game ends.
+    - callback: (Optional) A function to be called upon completion of the memory game.
         - triggerEvent: (Optional) The name of the event to trigger when the game ends (default is 'memorygame-callback').
 
     Returns: none
 ]]
-local function MemoryGame(callback, gameTime, amountOfAnswers, maxAnswersIncorrect, triggerEvent)
+local function MemoryGame(gameTime, amountOfAnswers, maxAnswersIncorrect, callback, triggerEvent)
     if gameTime == nil then
         gameTime = 10
     end
@@ -73,7 +73,7 @@ RegisterNUICallback('memorygame-callback', function(data, cb)
         if #memoryGameQueue > 0 then
             Citizen.SetTimeout(0, function()
                 SendNUIMessage({
-                    action = "newMemoryGame",
+                    action = "MemoryGame",
                     game = "MemoryGame",
                     gameTime = memoryGameQueue[1].gameTime,
                     amountOfAnswers = memoryGameQueue[1].amountOfAnswers,
