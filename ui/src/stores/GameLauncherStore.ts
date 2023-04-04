@@ -19,8 +19,11 @@ export const showLoading: Writable<boolean> = writable();
 export function setupGame(data): void {
 	const game = data.data;
 
+	console.log('setupgame');
+
 	switch (data.data.game) {
 		case GamesEnum.Memory: {
+			console.log(data.data.game);
 			currentGameActive.set(GamesEnum.Memory);
 			connectionText.set(ConnectingGameMessageEnum.Connecting);
 
