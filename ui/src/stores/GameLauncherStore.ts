@@ -17,22 +17,36 @@ export const connectionText: Writable<ConnectingGameMessageEnum> = writable();
 export const showLoading: Writable<boolean> = writable();
 
 export function setupGame(data): void {
-	showComponent.set(UIComponentsEnum.Game);
+	// showComponent.set(UIComponentsEnum.Game);
 
 	const game = data.data;
 
-	switch (data.data.game) {
-		case GamesEnum.Memory: {
-			currentGameActive.set(GamesEnum.Memory);
-			connectionText.set(ConnectingGameMessageEnum.Connecting);
+	showComponent.subscribe((component: UIComponentsEnum) => {
+		switch (component) {
+			case UIComponentsEnum.Image: {
+				console.log(data);
+			}
+			case UIComponentsEnum.Game: {
+				showComponent.set(UIComponentsEnum.Game);
 
-			gameSettings.set({
-				game: GamesEnum.Memory,
-				gameTime: game.gameTime || 2,
-				amountOfAnswers: game.amountOfAnswers || 15,
-				maxAnswersIncorrect: game.maxAnswersIncorrect || 2,
-				triggerEvent: game.triggerEvent || 'memorygame-callback',
-			});
+				switch (data.data.game) {
+					case GamesEnum.Memory: {
+						currentGameActive.set(GamesEnum.Memory);
+						connectionText.set(
+							ConnectingGameMessageEnum.Connecting
+						);
+
+						gameSettings.set({
+							game: GamesEnum.Memory,
+							gameTime: game.gameTime || 2,
+							amountOfAnswers: game.amountOfAnswers || 15,
+							maxAnswersIncorrect: game.maxAnswersIncorrect || 2,
+							triggerEvent:
+								game.triggerEvent || 'memorygame-callback',
+						});
+					}
+				}
+			}
 		}
-	}
+	});
 }

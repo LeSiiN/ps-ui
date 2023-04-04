@@ -21,23 +21,24 @@ export function EventHandler() {
 
 		switch (event.data.action) {
 			case 'ShowStatusBar':
-			case 'UpdateStatusBar': {
+				break;
+			case 'UpdateStatusBar':
 				showStatusBar(event.data as any);
-			}
-			case 'ShowMenu': {
-			}
-			case 'ShowInput': {
+				break;
+			case 'ShowMenu':
+				break;
+			case 'ShowInput':
 				showInput(event.data as any);
-			}
-			case 'ShowImage': {
+				break;
+			case 'ShowImage':
 				showImage(event.data as any);
-			}
-			case 'hideUi': {
+				break;
+			case 'hideUi':
 				hideUi();
-			}
-			case 'newMemoryGame': {
+				break;
+			case 'newMemoryGame':
 				setupGame(event.data as any);
-			}
+				break;
 		}
 	}
 
