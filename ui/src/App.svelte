@@ -14,12 +14,11 @@
 	import Menu from './components/Menu.svelte';
 	import Input from './components/Input.svelte';
 	import GameLauncher from './games/GameLauncher.svelte';
-	import { EventHandler } from './../utils/eventHandler';
-	import { showImageMock } from './../utils/mockEvent';
+	import { EventHandler, handleKeyUp } from './../utils/eventHandler';
 	import Image from './components/Image.svelte';
-	import Scrambler from './games/Scrambler.svelte';
 
 	EventHandler();
+	document.onkeyup = handleKeyUp;
 </script>
 
 {#if $showUi === true}
