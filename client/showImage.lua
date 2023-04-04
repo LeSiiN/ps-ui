@@ -1,7 +1,7 @@
 local function SetDisplay(bool, img)
     SetNuiFocus(bool, bool)
     SendNUIMessage({
-        action = "showImage",
+        action = "ShowImage",
         status = bool,
         image = img
     })

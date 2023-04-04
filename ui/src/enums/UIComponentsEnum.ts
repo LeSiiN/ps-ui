@@ -4,5 +4,6 @@ export enum UIComponentsEnum {
 	Input = 'Input',
 	Game = 'Game',
 	MemoryGame = 'MemoryGame',
-	Image = 'Image',
+	Image = 'ShowImage',
+	None = 'hideUi',
 }

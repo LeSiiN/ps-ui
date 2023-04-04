@@ -37,7 +37,7 @@ local function MemoryGame(callback, gameTime, amountOfAnswers, maxAnswersIncorre
         if #memoryGameQueue == 1 then
             Citizen.SetTimeout(0, function()
                 SendNUIMessage({
-                    action = "newMemoryGame",
+                    action = "MemoryGame",
                     game = "MemoryGame",
                     gameTime = gameTime,
                     amountOfAnswers = amountOfAnswers,
