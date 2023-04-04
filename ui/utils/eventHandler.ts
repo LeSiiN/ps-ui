@@ -17,6 +17,7 @@ interface nuiMessage {
 
 export function EventHandler() {
 	function mainEvent(event: nuiMessage) {
+		console.log(Object.values(event));
 		showUi.set(true);
 
 		switch (event.data.action) {
@@ -37,7 +38,6 @@ export function EventHandler() {
 				hideUi();
 				break;
 			case 'MemoryGame':
-				console.log(Object.values(event.data));
 				setupGame(event.data as any);
 				break;
 		}

@@ -7,6 +7,7 @@ credits 'https://github.com/sharkiller/nopixel_minigame'
 
 client_scripts {'client/*.lua'}
 
-ui_page {'dist/index.html'}
+ui_page {'ui/dist/index.html'}
 
-files {'dist/index.html', 'dist/assets/*.woff2', 'dist/assets/*.tff', 'dist/assets/*.css', 'dist/assets/*.js'}
+files {'ui/dist/index.html', 'ui/dist/assets/*.woff2', 'ui/dist/assets/*.tff', 'ui/dist/assets/*.css',
+       'ui/dist/assets/*.js'}

@@ -16,7 +16,7 @@ local memoryGameQueue = {}
 
     Returns: none
 ]]
-local function MemoryGame(gameTime, amountOfAnswers, maxAnswersIncorrect, callback, triggerEvent)
+local function MemoryGame(gameTime, amountOfAnswers, maxAnswersIncorrect, triggerEvent)
     if gameTime == nil then
         gameTime = 10
     end
@@ -24,29 +24,16 @@ local function MemoryGame(gameTime, amountOfAnswers, maxAnswersIncorrect, callba
     if not open then
         open = true
 
-        -- Add game parameters to message queue
-        table.insert(memoryGameQueue, {
-            callback = callback,
+        SendNUIMessage({
+            action = "MemoryGame",
+            game = "MemoryGame",
             gameTime = gameTime,
             amountOfAnswers = amountOfAnswers,
             maxAnswersIncorrect = maxAnswersIncorrect,
             triggerEvent = triggerEvent or 'memorygame-callback'
         })
-
-        -- If the message queue only contains one message, start the memory game
-        if #memoryGameQueue == 1 then
-            Citizen.SetTimeout(0, function()
-                SendNUIMessage({
-                    action = "MemoryGame",
-                    game = "MemoryGame",
-                    gameTime = gameTime,
-                    amountOfAnswers = amountOfAnswers,
-                    maxAnswersIncorrect = maxAnswersIncorrect,
-                    triggerEvent = triggerEvent or 'memorygame-callback'
-                })
-                SetNuiFocus(true, true)
-            end)
-        end
+        SetNuiFocus(true, true)
+        print('Alright?')
     end
 end
 
@@ -67,23 +54,6 @@ RegisterNUICallback('memorygame-callback', function(data, cb)
     if message then
         if success then
             message.callback(success)
-        end
-
-        -- If there are messages in the queue, start the next game
-        if #memoryGameQueue > 0 then
-            Citizen.SetTimeout(0, function()
-                SendNUIMessage({
-                    action = "MemoryGame",
-                    game = "MemoryGame",
-                    gameTime = memoryGameQueue[1].gameTime,
-                    amountOfAnswers = memoryGameQueue[1].amountOfAnswers,
-                    maxAnswersIncorrect = memoryGameQueue[1].maxAnswersIncorrect,
-                    triggerEvent = memoryGameQueue[1].triggerEvent
-                })
-                SetNuiFocus(true, true)
-            end)
-        else
-            open = false
         end
     end
 
