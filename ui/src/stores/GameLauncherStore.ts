@@ -22,12 +22,12 @@ export function setupGame(data): void {
 	const game = data.data;
 
 	switch (data.data.game) {
-		case GamesEnum.MemoryGame: {
-			currentGameActive.set(GamesEnum.MemoryGame);
+		case GamesEnum.Memory: {
+			currentGameActive.set(GamesEnum.Memory);
 			connectionText.set(ConnectingGameMessageEnum.Connecting);
 
 			gameSettings.set({
-				game: GamesEnum.MemoryGame,
+				game: GamesEnum.Memory,
 				gameTime: game.gameTime || 2,
 				amountOfAnswers: game.amountOfAnswers || 15,
 				maxAnswersIncorrect: game.maxAnswersIncorrect || 2,
