@@ -36,7 +36,7 @@ export function EventHandler() {
 			case 'hideUi':
 				hideUi();
 				break;
-			case 'newMemoryGame':
+			case 'MemoryGame':
 				setupGame(event.data as any);
 				break;
 		}
