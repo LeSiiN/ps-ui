@@ -11,6 +11,9 @@
 	import { GamesEnum } from './../enums/GamesEnum';
 	import Scrambler from './Scrambler.svelte';
 	import NumberMaze from './NumberMaze.svelte';
+	import { newMemoryGameMock } from './../../utils/mockEvent';
+
+	newMemoryGameMock();
 
 	const skullColor: string = '#02f1b5';
 

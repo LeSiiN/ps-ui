@@ -2,7 +2,7 @@
 	import { showImageMock } from './../../utils/mockEvent';
 	import { imageStore } from './../stores/ImageStore';
 
-	showImageMock();
+	// showImageMock();
 </script>
 
 <div class="flex items-center justify-center min-h-screen ">
