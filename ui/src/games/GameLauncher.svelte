@@ -13,8 +13,6 @@
 	import NumberMaze from './NumberMaze.svelte';
 	import { newMemoryGameMock } from './../../utils/mockEvent';
 
-	newMemoryGameMock();
-
 	const skullColor: string = '#02f1b5';
 
 	let loadingBar: HTMLDivElement;
