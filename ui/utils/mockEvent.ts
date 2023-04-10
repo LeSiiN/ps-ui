@@ -29,3 +29,16 @@ export function showImageMock() {
 		});
 	}, 100);
 }
+
+export function notificationMock() {
+	setTimeout(() => {
+		mockEventCall({
+			action: 'ShowNotification',
+			data: {
+				text: 'New notification',
+				type: 'ps-notification-success',
+				icon: 'fa-solid fa-times',
+			},
+		});
+	}, 500);
+}

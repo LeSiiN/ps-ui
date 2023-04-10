@@ -16,8 +16,11 @@
 	import GameLauncher from './games/GameLauncher.svelte';
 	import { EventHandler, handleKeyUp } from './../utils/eventHandler';
 	import Image from './components/Image.svelte';
+	import { notificationMock } from './../utils/mockEvent';
+	import Notification from './components/Notification.svelte';
 
 	EventHandler();
+	notificationMock();
 	document.onkeyup = handleKeyUp;
 </script>
 
@@ -40,6 +43,9 @@
 		{/if}
 		{#if $showComponent === UIComponentsEnum.Image}
 			<Image />
+		{/if}
+		{#if $showComponent === UIComponentsEnum.Notification}
+			<Notification />
 		{/if}
 	</main>
 {/if}

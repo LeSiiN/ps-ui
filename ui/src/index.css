@@ -69,4 +69,24 @@
 	.ps-bg-green-w-opacity {
 		background-color: rgba(2, 241, 181, 0.2);
 	}
+	.ps-notification-success {
+		background-color: #2ebd2e;
+		color: black;
+		border: 1px solid #158515;
+	}
+	.ps-notification-warning {
+		background-color: #fbb433;
+		border: 1px solid #cf8d15;
+		color: black;
+	}
+	.ps-notification-error {
+		background-color: #cd2222;
+		border: 1px solid #8d0e0e;
+		color: white;
+	}
+	.ps-notification-info {
+		background-color: #33addf;
+		border: 1px solid #1886b3;
+		color: black;
+	}
 }

@@ -7,6 +7,7 @@ import fetchNui from './fetch';
 import { UIComponentsEnum } from './../src/enums/UIComponentsEnum';
 import { setupGame } from '../src/stores/GameLauncherStore';
 import { showImage } from './../src/stores/ImageStore';
+import { addNotification } from './../src//stores/NotificationStore';
 
 interface nuiMessage {
 	data: {
@@ -16,11 +17,7 @@ interface nuiMessage {
 }
 
 export function EventHandler() {
-	console.log('eventhandler');
-
 	function mainEvent(event: nuiMessage) {
-		console.log('main event');
-		console.log(event.data);
 		showUi.set(true);
 
 		switch (event.data.action) {
@@ -40,8 +37,10 @@ export function EventHandler() {
 			case 'hideUi':
 				hideUi();
 				break;
+			case 'ShowNotification':
+				addNotification(event.data as any);
+				break;
 			case 'MemoryGame':
-				console.log('switch case');
 				setupGame(event.data as any);
 				break;
 		}
