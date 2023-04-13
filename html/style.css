@@ -245,7 +245,7 @@ body::-webkit-scrollbar {
   left:50%;
   transform: translate(-50%,-50%);
   overflow: visible;
-  height: 200ox;
+  height: 200px;
   width: 200px;
   color:#822ff6
 }
